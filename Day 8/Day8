@@ -1,0 +1,54 @@
+# Day 8 - Build Your First AI-Powered Dashboard
+
+## Project Name
+Personal Environmental Health Analyzer
+
+## Overview
+Today I used Claude Artifacts to build an interactive AI-powered dashboard.
+
+The dashboard analyzes environmental health data including:
+
+- Air Quality Index (AQI)
+- PM2.5 Levels
+- PM10 Levels
+- City Environmental Rankings
+- Health Impact Analysis
+- Personalized Recommendations
+- Environmental Report Cards
+
+## Features
+
+- Interactive dashboard UI
+- Data visualization charts
+- Environmental insights panel
+- City comparison table
+- Personalized recommendations
+- Health impact assessment
+- Mobile responsive design
+- Modern dark theme interface
+
+## What I Learned
+
+- How Claude Artifacts can generate complete applications
+- Converting prompts into working software
+- Dashboard design principles
+- Data visualization concepts
+- AI-assisted product development
+
+## Tools Used
+
+- Claude Sonnet 4.0
+- Claude Artifacts
+- HTML
+- CSS
+- JavaScript
+
+## Outcome
+
+Successfully built a fully functional AI-powered environmental health dashboard using prompts.
+
+## Status
+
+Day 8 completed successfully.
+
+#60DayClaudeChallenge
