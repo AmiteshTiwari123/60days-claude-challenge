@@ -1,0 +1,43 @@
+# Day 15 - Personal Life Analysis Consultant
+
+## Objective
+Learned how to use Claude for structured report generation using detailed inputs and multi-step reasoning.
+
+## Input Details
+
+- Full Name: Amitesh Tiwari
+- Gender: Male
+- Date of Birth: 06 August 2003
+- Birth Time: 11:07 AM
+- Birth Place: Kanpur, Uttar Pradesh
+- Current City: Kanpur
+- Profession: B.Tech Student & Aspiring React Developer
+
+## Generated Report
+
+Claude generated a comprehensive life analysis report covering:
+
+- Birth Chart Summary
+- Life Pattern Analysis
+- Career & Wealth Analysis
+- Relationship & Marriage Analysis
+- Current Dasha Analysis
+- Health Analysis
+- 5-Year Forecast
+- Remedies & Recommendations
+
+## Key Learnings
+
+1. Structured inputs improve output quality.
+2. Multi-step reasoning creates more detailed reports.
+3. Claude can organize large reports effectively.
+4. Better prompts lead to more accurate analysis.
+5. AI can combine multiple data points into actionable insights.
+
+## Screenshots
+
+See attached screenshots in this folder.
+
+## Conclusion
+
+Successfully created a Personal Life Analysis Consultant using Claude and learned advanced prompt engineering techniques for structured report generation.
