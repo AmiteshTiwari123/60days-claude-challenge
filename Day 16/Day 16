@@ -1,0 +1,135 @@
+# Day 16 - Build Your First Stock Research Skill
+
+## Objective
+Learned how to create reusable AI workflows using Claude Skills instead of repeatedly pasting long prompts.
+
+---
+
+## What I Learned
+
+### 1. Claude Skills
+Claude Skills allow us to save instructions permanently and reuse them across multiple conversations.
+
+Instead of copying and pasting the same prompt every time, we can create a custom skill once and trigger it whenever needed.
+
+Example:
+
+Before:
+- Paste a long stock analysis prompt every time.
+
+After:
+- Simply write:
+  - Analyze TCS
+  - Quick Take on Infosys
+  - Deep Dive into Reliance
+
+Claude automatically uses the saved skill.
+
+---
+
+### 2. Reusable AI Workflows
+
+A skill acts like a reusable AI workflow.
+
+Benefits:
+- Saves time
+- Consistent outputs
+- Better productivity
+- No need to remember long prompts
+- Can be used across multiple chats
+
+---
+
+### 3. Stock Fundamental Research Skill
+
+Created a custom skill named:
+
+stock-fundamental-research
+
+Purpose:
+Analyze Indian and global listed companies using fundamentals, financial statements, business quality, valuation, risks, growth prospects, and peer comparison.
+
+The skill provides:
+- Company Overview
+- Financial Analysis
+- Revenue & Profit Growth
+- ROE / ROCE Analysis
+- Debt Analysis
+- Promoter Holding Trends
+- Peer Comparison
+- Valuation Analysis
+- Risk Factors
+- Investor-Friendly Reports
+
+Important:
+The skill does not provide Buy, Sell, or Hold recommendations.
+
+---
+
+### 4. Skill Creation Process
+
+Steps followed:
+
+1. Open Claude Skills.
+2. Create a new custom skill.
+3. Set Skill Name:
+   stock-fundamental-research
+4. Add Description.
+5. Add Detailed Instructions.
+6. Save Skill.
+7. Test Skill using stocks like:
+   - TCS
+   - Infosys
+   - Reliance Industries
+   - HDFC Bank
+   - Tata Motors
+
+---
+
+### 5. Key Insight
+
+Prompt Engineering is useful.
+
+Skill Engineering is more powerful.
+
+A prompt solves one task.
+
+A skill creates a reusable system that can solve the same type of task repeatedly.
+
+---
+
+### 6. Future Skills I Can Build
+
+- ATS Resume Reviewer
+- Job Red Flag Analyzer
+- React Interview Coach
+- LinkedIn Post Generator
+- Career Mentor
+- Portfolio Reviewer
+- Startup Idea Evaluator
+- Vedic Astrology Consultant
+- AI Workshop Assistant
+
+---
+
+## Example Usage
+
+Quick Take on TCS
+
+Analyze Infosys
+
+Deep Dive into Reliance Industries
+
+Compare HDFC Bank vs ICICI Bank
+
+---
+
+## Key Takeaway
+
+Day 16 taught me how to convert long prompts into reusable AI skills. Instead of repeating instructions in every conversation, I can build custom skills once and use them whenever needed, improving productivity and consistency.
+
+#ABTalks
+#60DaysChallenge
+#ClaudeSkills
+#PromptEngineering
+#AIWorkflows
