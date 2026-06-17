@@ -1,0 +1,71 @@
+# Day 17 - AI Vehicle Cost & Fuel Analysis Dashboard
+
+## Challenge
+Build an AI-powered Vehicle Cost & Fuel Analysis Dashboard using Claude and CSV data.
+
+## Objective
+Learn how AI can act as a Data Analyst by processing CSV datasets, calculating business metrics, generating insights, and creating complete HTML dashboards.
+
+## What I Learned
+
+### 1. CSV Data Analysis
+- Uploading and analyzing structured CSV datasets.
+- Extracting meaningful information from raw data.
+- Performing automated calculations using AI.
+
+### 2. Dashboard Creation
+- Generating complete HTML dashboards using Claude.
+- Creating KPI cards and interactive layouts.
+- Designing responsive dashboards.
+
+### 3. Business Metrics
+- Cost per kilometer analysis.
+- CO₂ emission comparison.
+- Maintenance cost calculations.
+- Monthly operating cost estimation.
+
+### 4. Data Visualization
+- Bar Charts
+- Doughnut Charts
+- Line Charts
+- Gauge Charts
+
+### 5. Fuel Comparison
+Compared:
+- Petrol
+- Diesel
+- CNG
+- EV
+- E85
+
+Based on:
+- Running Cost
+- Maintenance Cost
+- Environmental Impact
+- Refueling Time
+- Overall Score
+
+## Key Insights
+
+- EV has the lowest running cost.
+- CNG provides strong cost efficiency.
+- E85 reduces emissions but may not always reduce total running cost.
+- Petrol offers convenience due to widespread availability.
+- Different fuels serve different use cases.
+
+## Tools Used
+- Claude AI
+- HTML
+- CSS
+- SVG Charts
+- CSV Dataset
+- GitHub
+
+## Deliverables
+- Vehicle Cost Dashboard
+- HTML Report
+- Screenshots
+- Analysis Summary
+
+## Outcome
+Successfully generated a complete AI-powered vehicle cost analysis dashboard from raw CSV data and learned how AI can automate data analytics workflows.
