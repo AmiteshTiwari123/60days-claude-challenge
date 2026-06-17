@@ -1,0 +1,208 @@
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    padding: 16px;
+    line-height: 1.5;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    margin-bottom: 24px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  header p {
+    color: #6b6b6f;
+    font-size: 14px;
+  }
+  section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  section h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .takeaways {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .takeaway-card {
+    background: #f7f8fa;
+    border: 1px solid #ececef;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+  }
+  .takeaway-card strong { display: block; font-size: 13px; color: #4338ca; margin-bottom: 2px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid #efeff1;
+  }
+  th {
+    color: #6b6b6f;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .badge-pending { background: #fef3c7; color: #92400e; }
+  .badge-notspec { background: #f1f1f3; color: #6b6b6f; font-style: italic; }
+  .speaker-block {
+    border-left: 3px solid #d6d6e0;
+    padding-left: 12px;
+    margin-bottom: 14px;
+  }
+  .speaker-block:last-child { margin-bottom: 0; }
+  .speaker-name {
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    color: #1a1a1a;
+  }
+  .speaker-block p {
+    font-size: 13.5px;
+    color: #3a3a3e;
+  }
+  ul.simple-list { list-style: none; }
+  ul.simple-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #efeff1;
+    font-size: 13.5px;
+  }
+  ul.simple-list li:last-child { border-bottom: none; }
+  .none-found {
+    color: #9a9aa0;
+    font-size: 13.5px;
+    font-style: italic;
+  }
+  .risk-item {
+    background: #fff5f5;
+    border: 1px solid #fde2e2;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    color: #7a2e2e;
+  }
+</style>
+
+<div class="container">
+  <header>
+    <h1>Meeting Notes Dashboard</h1>
+    <p>Transcript with 3 speakers — Rahul, Amitesh, Priya. Topic: website redesign and launch planning.</p>
+  </header>
+
+  <section>
+    <h2>📌 Key Takeaways</h2>
+    <div class="takeaways">
+      <div class="takeaway-card"><strong>Launch Date</strong>30 June (decided)</div>
+      <div class="takeaway-card"><strong>Homepage Redesign</strong>Due Friday — owner: Rahul</div>
+      <div class="takeaway-card"><strong>Blocker</strong>Client approval needed before dev starts</div>
+      <div class="takeaway-card"><strong>Open Item</strong>Final presentation owner not yet decided</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>✅ Action Items</h2>
+    <table>
+      <thead>
+        <tr><th>Task</th><th>Owner</th><th>Deadline</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Website homepage redesign</td>
+          <td>Rahul</td>
+          <td>Friday</td>
+          <td><span class="badge badge-pending">⏳ Pending</span></td>
+        </tr>
+        <tr>
+          <td>Prepare 5 social media posts</td>
+          <td>Priya</td>
+          <td><span class="badge badge-notspec">Not specified</span></td>
+          <td><span class="badge badge-pending">⏳ Pending</span></td>
+        </tr>
+        <tr>
+          <td>Obtain client approval before development starts</td>
+          <td><span class="badge badge-notspec">Not specified</span></td>
+          <td><span class="badge badge-notspec">Not specified</span></td>
+          <td><span class="badge badge-pending">⏳ Pending</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>🗣️ Speaker Summary</h2>
+    <div class="speaker-block">
+      <div class="speaker-name">Rahul</div>
+      <p>Owns the website homepage redesign, due Friday.</p>
+    </div>
+    <div class="speaker-block">
+      <div class="speaker-name">Amitesh</div>
+      <p>Flagged that client approval is required before development can begin.</p>
+    </div>
+    <div class="speaker-block">
+      <div class="speaker-name">Priya</div>
+      <p>Marketing content is pending; needs to prepare 5 social media posts.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>📋 Decisions</h2>
+    <ul class="simple-list">
+      <li>Launch planned on 30 June.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>❓ Open Questions</h2>
+    <ul class="simple-list">
+      <li>Who will prepare the final presentation? — <span class="badge badge-notspec">Not specified</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ Risks / Blockers</h2>
+    <div class="risk-item">Client approval delay — flagged as a risk to the timeline.</div>
+  </section>
+
+  <section>
+    <h2>🔀 Conflicts</h2>
+    <p class="none-found">None identified.</p>
+  </section>
+
+  <section>
+    <h2>📝 Additional Notes</h2>
+    <p class="none-found">None identified.</p>
+  </section>
+</div>
