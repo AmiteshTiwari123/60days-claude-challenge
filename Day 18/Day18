@@ -1,0 +1,61 @@
+# Day 18 - Brain Dump Action Planner Skill
+
+## Objective
+Build a reusable Claude Skill that converts messy notes, meeting transcripts, brainstorming sessions, and voice memos into structured action plans and dashboards.
+
+## What I Learned
+
+### Custom Skills
+Claude Skills can store reusable workflows and execute them automatically without repeating prompts.
+
+### Information Management
+Transform unstructured notes into:
+- Summaries
+- Action Items
+- Decisions
+- Risks
+- Open Questions
+
+### Dashboard Generation
+Generate interactive HTML dashboards from notes and transcripts.
+
+### Productivity Improvement
+Reduce manual organization work and improve clarity.
+
+## Skill Created
+
+Skill Name:
+brain-dump-action-planner
+
+Purpose:
+Convert raw notes into actionable project plans and dashboards.
+
+## Features
+
+- Summary Generation
+- Key Takeaways
+- Action Items Table
+- Open Questions Tracking
+- Risks & Blockers Analysis
+- Conflict Detection
+- Transcript Analysis
+- Merge Multiple Notes
+
+## Test Case
+
+Used sample meeting notes to generate:
+
+- Project Dashboard
+- Task List
+- Risk Analysis
+- Open Questions
+
+## Key Learning
+
+Claude Skills act like reusable AI workflows.
+
+Once created, the skill can be triggered repeatedly without re-entering the complete instructions.
+
+## Outcome
+
+Successfully built and tested a Brain Dump Action Planner Skill that transforms chaotic information into structured project dashboards.
