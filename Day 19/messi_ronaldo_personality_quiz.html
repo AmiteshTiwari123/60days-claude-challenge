@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messi vs Ronaldo Personality Match</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 1.5rem; color: #1a1a1a; }
+  .wrap { max-width: 660px; margin: 0 auto; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; color: #888; text-transform: uppercase; margin: 0 0 1rem; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+  .sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5;}
+  .q-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .q-num { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .trait-tag { font-size: 10px; padding: 2px 8px; border-radius: 999px; background: #EEEDFE; color: #533B89; margin-left: 6px; text-transform: none; letter-spacing: 0; font-weight: 600;}
+  .q-text { font-size: 15px; font-weight: 600; color: #1a1a1a; margin: 0 0 1rem; line-height: 1.5; }
+  .opt-btn { display: block; width: 100%; text-align: left; padding: 11px 14px; margin-bottom: 8px; background: #f8f8f8; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 14px; color: #1a1a1a; cursor: pointer; }
+  .opt-btn:hover { background: #fff; border-color: #ccc; }
+  .opt-btn.selected { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+  .opt-letter { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #ddd; text-align: center; line-height: 20px; font-size: 11px; font-weight: 600; margin-right: 10px; color: #888; }
+  .selected .opt-letter { background: #378ADD; color: #fff; border-color: #378ADD; }
+  /* rating scale */
+  .scale-row { display: flex; gap: 6px; margin-top: 4px; }
+  .scale-btn { flex: 1; padding: 12px 4px; text-align: center; background: #f8f8f8; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 13px; font-weight: 600; color: #888; cursor: pointer; }
+  .scale-btn:hover { background: #fff; }
+  .scale-btn.selected { background: #378ADD; color: #fff; border-color: #378ADD; }
+  .scale-labels { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-top: 6px; }
+  .submit-btn { display: block; width: 100%; padding: 14px; background: #fff; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; font-weight: 600; color: #888; cursor: not-allowed; text-align: center; margin-top: 1.5rem; }
+  .submit-btn.active { color: #1a1a1a; cursor: pointer; }
+  .submit-btn.active:hover { background: #f5f5f5; }
+  .progress-row { display: flex; gap: 4px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .prog-dot { flex: 1; min-width: 14px; height: 4px; border-radius: 999px; background: #e5e5e5; }
+  .prog-dot.done { background: #378ADD; }
+  .result-wrap { display: none; }
+  .progress-counter { font-size: 13px; color: #aaa; margin-bottom: 0.5rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="section-label">Stage 3 — Messi vs Ronaldo Personality Match</p>
+  <h1>Discover your football personality</h1>
+  <p class="sub">12 questions — multiple choice & rating scales. Answer honestly, based on how you actually behave, not how you wish you would. We'll reveal who you match at the end.</p>
+
+  <div class="progress-counter" id="counter">0 / 12 answered</div>
+  <div class="progress-row" id="progress"></div>
+
+  <div id="quiz-form">
+    <div class="q-card">
+      <div class="q-num">Question 1 <span class="trait-tag">Ambition</span></div>
+      <p class="q-text">You've just finished a project that turned out really well. What's your next thought?</p>
+      <button class="opt-btn" data-q="1" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> "On to the next bigger challenge — I can't sit still."</button>
+      <button class="opt-btn" data-q="1" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> "Let me enjoy this moment before thinking what's next."</button>
+      <button class="opt-btn" data-q="1" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> "How can I make sure I top this next time?"</button>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 2 <span class="trait-tag">Discipline</span></div>
+      <p class="q-text">Rate how true this is: "I stick to my routines and habits even when no one is watching or checking on me."</p>
+      <div class="scale-row" data-q="2">
+        <div class="scale-btn" data-v="1" onclick="pickScale(this)">1</div>
+        <div class="scale-btn" data-v="2" onclick="pickScale(this)">2</div>
+        <div class="scale-btn" data-v="3" onclick="pickScale(this)">3</div>
+        <div class="scale-btn" data-v="4" onclick="pickScale(this)">4</div>
+        <div class="scale-btn" data-v="5" onclick="pickScale(this)">5</div>
+      </div>
+      <div class="scale-labels"><span>Not at all true</span><span>Completely true</span></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 3 <span class="trait-tag">Leadership</span></div>
+      <p class="q-text">In a group project that's falling apart, you usually...</p>
+      <button class="opt-btn" data-q="3" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> Quietly take charge and start fixing things without announcing it.</button>
+      <button class="opt-btn" data-q="3" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> Rally everyone with an energetic speech and push the team forward.</button>
+      <button class="opt-btn" data-q="3" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> Focus on doing your own part perfectly and trust others to do theirs.</button>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 4 <span class="trait-tag">Teamwork</span></div>
+      <p class="q-text">Rate how true this is: "I'd rather make a teammate look good with a great pass than score the goal myself."</p>
+      <div class="scale-row" data-q="4">
+        <div class="scale-btn" data-v="1" onclick="pickScale(this)">1</div>
+        <div class="scale-btn" data-v="2" onclick="pickScale(this)">2</div>
+        <div class="scale-btn" data-v="3" onclick="pickScale(this)">3</div>
+        <div class="scale-btn" data-v="4" onclick="pickScale(this)">4</div>
+        <div class="scale-btn" data-v="5" onclick="pickScale(this)">5</div>
+      </div>
+      <div class="scale-labels"><span>Not at all true</span><span>Completely true</span></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 5 <span class="trait-tag">Creativity</span></div>
+      <p class="q-text">When solving a tricky problem, you tend to...</p>
+      <button class="opt-btn" data-q="5" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> Improvise on the spot — find an unexpected, elegant solution.</button>
+      <button class="opt-btn" data-q="5" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> Use a proven method that you know works through sheer effort.</button>
+      <button class="opt-btn" data-q="5" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> Plan multiple approaches in advance, then pick the smartest one.</button>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 6 <span class="trait-tag">Competitiveness</span></div>
+      <p class="q-text">Rate how true this is: "Losing — even at something casual — genuinely bothers me for a while."</p>
+      <div class="scale-row" data-q="6">
+        <div class="scale-btn" data-v="1" onclick="pickScale(this)">1</div>
+        <div class="scale-btn" data-v="2" onclick="pickScale(this)">2</div>
+        <div class="scale-btn" data-v="3" onclick="pickScale(this)">3</div>
+        <div class="scale-btn" data-v="4" onclick="pickScale(this)">4</div>
+        <div class="scale-btn" data-v="5" onclick="pickScale(this)">5</div>
+      </div>
+      <div class="scale-labels"><span>Not at all true</span><span>Completely true</span></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 7 <span class="trait-tag">Confidence</span></div>
+      <p class="q-text">Before a big moment (a presentation, interview, performance), you usually feel...</p>
+      <button class="opt-btn" data-q="7" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> Calm — quiet self-belief that you'll come through.</button>
+      <button class="opt-btn" data-q="7" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> Pumped up — you want the spotlight and the pressure.</button>
+      <button class="opt-btn" data-q="7" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> Focused and methodical — you've prepared for every scenario.</button>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 8 <span class="trait-tag">Work ethic</span></div>
+      <p class="q-text">Rate how true this is: "I'm willing to put in extra hours, alone, that nobody else will ever see or know about."</p>
+      <div class="scale-row" data-q="8">
+        <div class="scale-btn" data-v="1" onclick="pickScale(this)">1</div>
+        <div class="scale-btn" data-v="2" onclick="pickScale(this)">2</div>
+        <div class="scale-btn" data-v="3" onclick="pickScale(this)">3</div>
+        <div class="scale-btn" data-v="4" onclick="pickScale(this)">4</div>
+        <div class="scale-btn" data-v="5" onclick="pickScale(this)">5</div>
+      </div>
+      <div class="scale-labels"><span>Not at all true</span><span>Completely true</span></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 9 <span class="trait-tag">Learning style</span></div>
+      <p class="q-text">When you pick up a new skill, you learn best by...</p>
+      <button class="opt-btn" data-q="9" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> Just trying things and feeling your way through instinctively.</button>
+      <button class="opt-btn" data-q="9" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> Repetition — drilling the same thing over and over until it's automatic.</button>
+      <button class="opt-btn" data-q="9" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> Studying the theory and structure first, then applying it precisely.</button>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 10 <span class="trait-tag">Decision-making</span></div>
+      <p class="q-text">When making an important decision under pressure, you...</p>
+      <button class="opt-btn" data-q="10" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> Trust your gut — it's rarely wrong and you decide fast.</button>
+      <button class="opt-btn" data-q="10" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> Go with the bold, decisive option — hesitation feels worse than a wrong call.</button>
+      <button class="opt-btn" data-q="10" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> Weigh the options carefully, even if it takes a bit longer.</button>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 11 <span class="trait-tag">Ambition</span></div>
+      <p class="q-text">Rate how true this is: "I've set myself a goal that most people around me think is unrealistic."</p>
+      <div class="scale-row" data-q="11">
+        <div class="scale-btn" data-v="1" onclick="pickScale(this)">1</div>
+        <div class="scale-btn" data-v="2" onclick="pickScale(this)">2</div>
+        <div class="scale-btn" data-v="3" onclick="pickScale(this)">3</div>
+        <div class="scale-btn" data-v="4" onclick="pickScale(this)">4</div>
+        <div class="scale-btn" data-v="5" onclick="pickScale(this)">5</div>
+      </div>
+      <div class="scale-labels"><span>Not at all true</span><span>Completely true</span></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">Question 12 <span class="trait-tag">Competitiveness</span></div>
+      <p class="q-text">If someone publicly doubts your ability, your instinct is to...</p>
+      <button class="opt-btn" data-q="12" data-v="A" onclick="pick(this)"><span class="opt-letter">A</span> Let your results do the talking — quietly prove them wrong over time.</button>
+      <button class="opt-btn" data-q="12" data-v="B" onclick="pick(this)"><span class="opt-letter">B</span> Feel a fire light up inside you — you want to prove it right now.</button>
+      <button class="opt-btn" data-q="12" data-v="C" onclick="pick(this)"><span class="opt-letter">C</span> Stay unbothered — their opinion doesn't change your plan.</button>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitQuiz()">See my personality match</button>
+  </div>
+
+  <div class="result-wrap" id="result-wrap"></div>
+</div>
+
+<script>
+  const answers = {};
+  const total = 12;
+
+  // Build progress dots
+  const progEl = document.getElementById('progress');
+  for (let i = 1; i <= total; i++) {
+    const d = document.createElement('div');
+    d.className = 'prog-dot';
+    d.id = 'p' + i;
+    progEl.appendChild(d);
+  }
+
+  function updateCounter() {
+    document.getElementById('counter').textContent = Object.keys(answers).length + ' / ' + total + ' answered';
+    if (Object.keys(answers).length === total) document.getElementById('submit-btn').classList.add('active');
+  }
+
+  function pick(btn) {
+    const q = btn.dataset.q;
+    document.querySelectorAll('.opt-btn[data-q="' + q + '"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[q] = btn.dataset.v;
+    document.getElementById('p' + q).classList.add('done');
+    updateCounter();
+  }
+
+  function pickScale(btn) {
+    const row = btn.parentElement;
+    const q = row.dataset.q;
+    row.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[q] = btn.dataset.v;
+    document.getElementById('p' + q).classList.add('done');
+    updateCounter();
+  }
+
+  // Trait mapping per question: which letter/scale-direction leans Messi (creative/instinctive/quiet) vs Ronaldo (explosive/disciplined/vocal)
+  // For MC questions: A/B/C mapped per-question to messi/ronaldo/neutral-or-mixed leanings
+  const mcLean = {
+    1: { A: 'ronaldo', B: 'messi', C: 'ronaldo' },
+    3: { A: 'messi', B: 'ronaldo', C: 'neutral' },
+    5: { A: 'messi', B: 'ronaldo', C: 'neutral' },
+    7: { A: 'messi', B: 'ronaldo', C: 'neutral' },
+    9: { A: 'messi', B: 'ronaldo', C: 'neutral' },
+    10: { A: 'messi', B: 'ronaldo', C: 'neutral' },
+    12: { A: 'messi', B: 'ronaldo', C: 'neutral' }
+  };
+  // For scale questions: higher score (4-5) leans which way
+  const scaleLean = {
+    2: 'ronaldo',  // discipline -> Ronaldo's famed regimented discipline
+    4: 'messi',    // teamwork/assist-preference -> Messi's playmaking generosity
+    6: 'ronaldo',  // competitiveness intensity -> Ronaldo's fiery competitiveness
+    8: 'ronaldo',  // extreme work ethic / solo hours -> Ronaldo's legendary gym ethic
+    11: 'ronaldo'  // bold, "unrealistic" personal goals -> Ronaldo's outspoken ambition
+  };
+
+  function submitQuiz() {
+    if (Object.keys(answers).length < total) return;
+
+    let messiPts = 0, ronaldoPts = 0, totalPts = 0;
+
+    for (const q in mcLean) {
+      const lean = mcLean[q][answers[q]];
+      totalPts += 2;
+      if (lean === 'messi') messiPts += 2;
+      else if (lean === 'ronaldo') ronaldoPts += 2;
+      else { messiPts += 1; ronaldoPts += 1; }
+    }
+
+    for (const q in scaleLean) {
+      const val = parseInt(answers[q]);
+      totalPts += 4;
+      const target = scaleLean[q];
+      // val 1-5: convert to points toward target (val) and away (6-val)
+      if (target === 'messi') { messiPts += val; ronaldoPts += (6 - val); }
+      else { ronaldoPts += val; messiPts += (6 - val); }
+    }
+
+    const messiPct = Math.round((messiPts / totalPts) * 100);
+    const ronaldoPct = Math.round((ronaldoPts / totalPts) * 100);
+    // normalize so they sum to 100
+    const sum = messiPct + ronaldoPct;
+    const mFinal = Math.round((messiPct / sum) * 100);
+    const rFinal = 100 - mFinal;
+
+    let archetype, archDesc, archTraits;
+    const diff = mFinal - rFinal;
+
+    if (diff >= 15) { archetype = 'Creative Playmaker'; archDesc = 'You see the game three steps ahead. Improvisation, vision, and elegant problem-solving come naturally to you.'; archTraits = ['Vision', 'Adaptability', 'Calm under pressure', 'Generosity']; }
+    else if (diff <= -15) { archetype = 'Relentless Competitor'; archDesc = 'You are driven by an internal fire. Discipline, intensity, and refusing to lose define how you operate.'; archTraits = ['Discipline', 'Intensity', 'Bold ambition', 'Physical work ethic']; }
+    else if (diff > 5) { archetype = 'Quiet Leader'; archDesc = 'You lead by example rather than noise. People trust your steady hand more than your speeches.'; archTraits = ['Quiet confidence', 'Consistency', 'Trustworthiness', 'Subtle influence']; }
+    else if (diff < -5) { archetype = 'Fearless Attacker'; archDesc = 'You go straight at challenges. Hesitation isn\'t in your vocabulary — you\'d rather act boldly and adjust than wait.'; archTraits = ['Boldness', 'Self-belief', 'Decisiveness', 'Drive']; }
+    else { archetype = 'Strategic Commander'; archDesc = 'You balance instinct with planning. You read situations carefully and choose your moments with precision.'; archTraits = ['Balance', 'Strategic thinking', 'Composure', 'Versatility']; }
+
+    let resemble, resembleColor;
+    if (mFinal > rFinal) { resemble = 'Messi'; resembleColor = '#0C447C'; }
+    else { resemble = 'Ronaldo'; resembleColor = '#A32D2D'; }
+
+    const html = `
+    <div class="q-card" style="text-align:center;">
+      <div style="font-size:12px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;">Your personality compatibility</div>
+      <div style="display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem;">
+        <div>
+          <div style="font-size:32px;font-weight:700;color:#0C447C;">${mFinal}%</div>
+          <div style="font-size:13px;color:#888;">Messi match</div>
+        </div>
+        <div>
+          <div style="font-size:32px;font-weight:700;color:#A32D2D;">${rFinal}%</div>
+          <div style="font-size:13px;color:#888;">Ronaldo match</div>
+        </div>
+      </div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:0.5rem;color:${resembleColor};">You resemble ${resemble} more</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;">${resemble === 'Messi' ? 'Your instincts lean toward calm creativity, quiet confidence, and elevating those around you — the hallmarks of Messi\\'s game and personality.' : 'Your instincts lean toward bold intensity, relentless discipline, and thriving on pressure — the hallmarks of Ronaldo\\'s game and personality.'}</p>
+    </div>
+
+    <div class="q-card">
+      <div style="font-size:12px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Your archetype</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px;">${archetype}</div>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:10px;">${archDesc}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${archTraits.map(t => '<span style="font-size:11px;background:#EEEDFE;color:#533B89;padding:3px 10px;border-radius:999px;">' + t + '</span>').join('')}
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;background:#E6F1FB;border-radius:12px;padding:1.25rem;">
+      <div style="font-size:13px;font-weight:600;color:#0C447C;margin-bottom:6px;">Quiz complete!</div>
+      <p style="font-size:13px;color:#185FA5;line-height:1.6;">Tell Claude your Messi % / Ronaldo % and your archetype to get your full Football Intelligence Profile with player, club, team, and rivalry recommendations.</p>
+    </div>
+    `;
+
+    document.getElementById('result-wrap').innerHTML = html;
+    document.getElementById('quiz-form').style.display = 'none';
+    document.getElementById('result-wrap').style.display = 'block';
+  }
+</script>
+</body>
+</html>

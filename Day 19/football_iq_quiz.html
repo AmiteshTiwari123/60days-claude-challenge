@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football IQ Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 1.5rem; color: #1a1a1a; }
+  .quiz-wrap { max-width: 640px; margin: 0 auto; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; color: #888; text-transform: uppercase; margin: 0 0 1rem; }
+  .q-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .q-num { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .q-text { font-size: 15px; font-weight: 600; color: #1a1a1a; margin: 0 0 0.5rem; line-height: 1.5; }
+  .q-hint { font-size: 12px; color: #bbb; margin-bottom: 12px; font-style: italic; }
+  .opt-btn { display: block; width: 100%; text-align: left; padding: 11px 14px; margin-bottom: 8px; background: #f8f8f8; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 14px; color: #1a1a1a; cursor: pointer; transition: all 0.15s; }
+  .opt-btn:hover { background: #fff; border-color: #ccc; }
+  .opt-btn.selected { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+  .opt-letter { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #ddd; text-align: center; line-height: 20px; font-size: 11px; font-weight: 600; margin-right: 10px; color: #888; }
+  .selected .opt-letter { background: #378ADD; color: #fff; border-color: #378ADD; }
+  .diff-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; margin-left: 8px; }
+  .diff-easy { background: #EAF3DE; color: #3B6D11; }
+  .diff-med { background: #FAEEDA; color: #854F0B; }
+  .diff-hard { background: #FCEBEB; color: #A32D2D; }
+  .submit-btn { display: block; width: 100%; padding: 14px; background: #fff; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; font-weight: 600; color: #888; cursor: not-allowed; text-align: center; margin-top: 1.5rem; transition: all 0.15s; }
+  .submit-btn.active { color: #1a1a1a; cursor: pointer; }
+  .submit-btn.active:hover { background: #f5f5f5; }
+  .progress-row { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+  .prog-dot { flex: 1; height: 4px; border-radius: 999px; background: #e5e5e5; }
+  .prog-dot.done { background: #378ADD; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+  .sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
+  .result-wrap { display: none; }
+  .score-big { font-size: 48px; font-weight: 700; color: #378ADD; }
+  .class-badge { display: inline-block; padding: 6px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; margin: 0.5rem 0 1rem; }
+  .answer-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .tick { color: #3B6D11; font-weight: 700; }
+  .cross { color: #A32D2D; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap">
+  <p class="section-label">Stage 2 — Football IQ Quiz</p>
+  <h1>Test your football knowledge</h1>
+  <p class="sub">5 questions · adapted for beginners · answer all before submitting</p>
+
+  <div class="progress-row">
+    <div class="prog-dot" id="p1"></div>
+    <div class="prog-dot" id="p2"></div>
+    <div class="prog-dot" id="p3"></div>
+    <div class="prog-dot" id="p4"></div>
+    <div class="prog-dot" id="p5"></div>
+  </div>
+
+  <div id="quiz-form">
+    <!-- Q1 -->
+    <div class="q-card">
+      <div class="q-num">Question 1 of 5 <span class="diff-badge diff-easy">Beginner</span></div>
+      <p class="q-text">How many players does each team have on the pitch during a football match?</p>
+      <p class="q-hint">Think about what you might see on a football field.</p>
+      <button class="opt-btn" onclick="pick(1,'A',this)"><span class="opt-letter">A</span> 9 players</button>
+      <button class="opt-btn" onclick="pick(1,'B',this)"><span class="opt-letter">B</span> 11 players</button>
+      <button class="opt-btn" onclick="pick(1,'C',this)"><span class="opt-letter">C</span> 13 players</button>
+      <button class="opt-btn" onclick="pick(1,'D',this)"><span class="opt-letter">D</span> 10 players</button>
+    </div>
+    <!-- Q2 -->
+    <div class="q-card">
+      <div class="q-num">Question 2 of 5 <span class="diff-badge diff-easy">Beginner</span></div>
+      <p class="q-text">Which country won the last FIFA World Cup before 2026?</p>
+      <p class="q-hint">You read about this in Stage 1 — the 2022 champion!</p>
+      <button class="opt-btn" onclick="pick(2,'A',this)"><span class="opt-letter">A</span> Brazil</button>
+      <button class="opt-btn" onclick="pick(2,'B',this)"><span class="opt-letter">B</span> France</button>
+      <button class="opt-btn" onclick="pick(2,'C',this)"><span class="opt-letter">C</span> Argentina</button>
+      <button class="opt-btn" onclick="pick(2,'D',this)"><span class="opt-letter">D</span> Germany</button>
+    </div>
+    <!-- Q3 -->
+    <div class="q-card">
+      <div class="q-num">Question 3 of 5 <span class="diff-badge diff-med">Intermediate</span></div>
+      <p class="q-text">The FIFA World Cup is held every how many years?</p>
+      <p class="q-hint">This is one of sport's most well-known facts.</p>
+      <button class="opt-btn" onclick="pick(3,'A',this)"><span class="opt-letter">A</span> Every 2 years</button>
+      <button class="opt-btn" onclick="pick(3,'B',this)"><span class="opt-letter">B</span> Every 3 years</button>
+      <button class="opt-btn" onclick="pick(3,'C',this)"><span class="opt-letter">C</span> Every 4 years</button>
+      <button class="opt-btn" onclick="pick(3,'D',this)"><span class="opt-letter">D</span> Every 5 years</button>
+    </div>
+    <!-- Q4 -->
+    <div class="q-card">
+      <div class="q-num">Question 4 of 5 <span class="diff-badge diff-med">Intermediate</span></div>
+      <p class="q-text">What award is given to the best player of an entire FIFA World Cup tournament?</p>
+      <p class="q-hint">Messi has won this award twice — once in 2014 and once in 2022.</p>
+      <button class="opt-btn" onclick="pick(4,'A',this)"><span class="opt-letter">A</span> The Golden Boot</button>
+      <button class="opt-btn" onclick="pick(4,'B',this)"><span class="opt-letter">B</span> The Golden Glove</button>
+      <button class="opt-btn" onclick="pick(4,'C',this)"><span class="opt-letter">C</span> The Golden Ball</button>
+      <button class="opt-btn" onclick="pick(4,'D',this)"><span class="opt-letter">D</span> The Silver Trophy</button>
+    </div>
+    <!-- Q5 -->
+    <div class="q-card">
+      <div class="q-num">Question 5 of 5 <span class="diff-badge diff-hard">Advanced</span></div>
+      <p class="q-text">Based on the 2026 group stage results, which team scored the most goals in a single match?</p>
+      <p class="q-hint">Check back to the live results table in Stage 1.</p>
+      <button class="opt-btn" onclick="pick(5,'A',this)"><span class="opt-letter">A</span> USA — 4 goals vs Paraguay</button>
+      <button class="opt-btn" onclick="pick(5,'B',this)"><span class="opt-letter">B</span> Germany — 7 goals vs Curaçao</button>
+      <button class="opt-btn" onclick="pick(5,'C',this)"><span class="opt-letter">C</span> Sweden — 5 goals vs Tunisia</button>
+      <button class="opt-btn" onclick="pick(5,'D',this)"><span class="opt-letter">D</span> Argentina — 3 goals vs Algeria</button>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitQuiz()">Submit all answers</button>
+  </div>
+
+  <div class="result-wrap" id="result-wrap">
+    <div class="q-card" style="text-align:center;padding:2rem 1.25rem;">
+      <div class="score-big" id="res-score"></div>
+      <div style="font-size:14px;color:#888;margin-bottom:0.5rem;">Football Awareness Score</div>
+      <div class="class-badge" id="res-badge"></div>
+      <p id="res-desc" style="font-size:14px;color:#555;line-height:1.6;margin-bottom:1.5rem;"></p>
+      <div id="res-answers" style="text-align:left;"></div>
+    </div>
+    <div style="margin-top:1rem;background:#E6F1FB;border-radius:12px;padding:1.25rem;">
+      <div style="font-size:13px;font-weight:600;color:#0C447C;margin-bottom:6px;">Your results are ready — let's keep going!</div>
+      <p style="font-size:13px;color:#185FA5;line-height:1.6;">Close this file and tell Claude your score to move to Stage 3: Messi vs Ronaldo Personality Match.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const answers = {};
+  const correct = { 1:'B', 2:'C', 3:'C', 4:'C', 5:'B' };
+  const qTexts = {
+    1: 'Players per team on pitch',
+    2: '2022 World Cup winner',
+    3: 'World Cup frequency',
+    4: 'Best player award name',
+    5: 'Most goals in one match (2026)'
+  };
+  const correctAnswers = {
+    1: '11 players',
+    2: 'Argentina',
+    3: 'Every 4 years',
+    4: 'The Golden Ball',
+    5: 'Germany — 7 goals vs Curaçao'
+  };
+
+  function pick(q, opt, btn) {
+    document.querySelectorAll('.q-card')[q-1].querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[q] = opt;
+    document.getElementById('p' + q).classList.add('done');
+    if (Object.keys(answers).length === 5) document.getElementById('submit-btn').classList.add('active');
+  }
+
+  function submitQuiz() {
+    if (Object.keys(answers).length < 5) return;
+    let score = 0;
+    for (let q = 1; q <= 5; q++) { if (answers[q] === correct[q]) score++; }
+
+    const pct = Math.round((score / 5) * 100);
+    let cls, clsColor, clsBg, desc;
+    if (score <= 1) { cls = 'Beginner Fan'; clsColor = '#3B6D11'; clsBg = '#EAF3DE'; desc = 'You\'re just getting started — and that\'s totally fine! The World Cup is a great place to begin your football journey.'; }
+    else if (score === 2) { cls = 'Casual Viewer'; clsColor = '#854F0B'; clsBg = '#FAEEDA'; desc = 'You know the basics and can follow a match. A little more exposure and you\'ll be hooked!'; }
+    else if (score === 3) { cls = 'Football Follower'; clsColor = '#185FA5'; clsBg = '#E6F1FB'; desc = 'Solid foundation! You understand how the game works and keep up with the big moments.'; }
+    else if (score === 4) { cls = 'Football Enthusiast'; clsColor = '#533B89'; clsBg = '#EEEDFE'; desc = 'Impressive! You clearly pay attention — you caught details from Stage 1 and know your football history.'; }
+    else { cls = 'Football Expert'; clsColor = '#0C447C'; clsBg = '#B5D4F4'; desc = 'Perfect score! You nailed every question including the tricky live data one. You\'re a true football brain.'; }
+
+    document.getElementById('res-score').textContent = pct + '/100';
+    const badge = document.getElementById('res-badge');
+    badge.textContent = cls;
+    badge.style.background = clsBg;
+    badge.style.color = clsColor;
+    document.getElementById('res-desc').textContent = desc;
+
+    let html = '<div style="font-size:12px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Answer breakdown</div>';
+    for (let q = 1; q <= 5; q++) {
+      const isRight = answers[q] === correct[q];
+      html += '<div class="answer-row"><span style="font-size:16px;">' + (isRight ? '✅' : '❌') + '</span><div><div style="font-weight:600;font-size:13px;">Q' + q + ': ' + qTexts[q] + '</div>';
+      if (!isRight) html += '<div style="font-size:12px;color:#A32D2D;">Correct answer: ' + correctAnswers[q] + '</div>';
+      html += '</div></div>';
+    }
+    document.getElementById('res-answers').innerHTML = html;
+
+    document.getElementById('quiz-form').style.display = 'none';
+    document.getElementById('result-wrap').style.display = 'block';
+  }
+</script>
+</body>
+</html>
