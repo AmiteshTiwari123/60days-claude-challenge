@@ -1,0 +1,28 @@
+# Day 20 - AI Face Puzzle Game
+
+## Project Overview
+Built an AI-powered Face Puzzle Game using Claude.
+
+## Features
+- Webcam Integration
+- Face Capture
+- 3x3, 4x4, 5x5 Difficulty Levels
+- Drag & Drop Puzzle
+- Move Counter
+- Timer Tracking
+- Best Score Leaderboard
+- Responsive UI
+
+## Learning Outcomes
+- Browser Camera APIs
+- Image Processing
+- HTML Canvas
+- Drag and Drop Interactions
+- Local Storage
+- Interactive Game Development
+
+## Result
+Successfully generated a working Face Puzzle Game using Claude AI and tested all functionalities including photo capture, puzzle generation, gameplay, and score tracking.
+
+## Screenshots
+(Add screenshots here)
