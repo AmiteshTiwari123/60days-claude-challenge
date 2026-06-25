@@ -1,0 +1,24 @@
+# Day 25 - AI Shark Tank Simulator
+
+## What I Built
+An AI-powered Shark Tank Simulator that evaluates startup ideas like investors.
+
+## Features
+- Startup Evaluation
+- Investor Scorecard
+- Market Analysis
+- Revenue Potential Analysis
+- Funding Recommendation
+- Interactive Dashboard
+
+## Key Learnings
+- How investors think
+- Startup valuation basics
+- Market opportunity assessment
+- Importance of scalability
+
+## Tech Used
+- HTML
+- CSS
+- JavaScript
+- Claude AI
