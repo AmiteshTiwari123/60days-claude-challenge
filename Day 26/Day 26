@@ -1,0 +1,95 @@
+# Day 26 - Prior Authorization Workflow Simulator
+
+## 📌 Project Overview
+
+Today I built an **AI-powered Prior Authorization Workflow Simulator** using Claude AI. The application simulates the healthcare prior authorization process through an interactive workflow, helping users understand how insurance approvals are processed between patients, healthcare providers, and insurance companies.
+
+This project demonstrates how AI can generate complete browser applications that simplify complex business workflows using interactive UI and gamification.
+
+---
+
+## 🚀 Features
+
+- Interactive healthcare workflow simulation
+- Step-by-step authorization process
+- Patient, Provider, and Insurance roles
+- Decision-based workflow navigation
+- Progress tracking
+- Responsive modern UI
+- Fully browser-based (HTML, CSS & JavaScript)
+- AI-generated application with Claude
+
+---
+
+## 🔄 Workflow
+
+1. Patient submits treatment request
+2. Healthcare provider creates authorization request
+3. Insurance company reviews submission
+4. Additional documents requested (if needed)
+5. Medical review process
+6. Approval or rejection decision
+7. Final workflow summary
+
+---
+
+## 🛠️ Technologies Used
+
+- HTML5
+- CSS3
+- JavaScript
+- Claude AI
+
+---
+
+## 📸 Screenshots
+
+### Home Screen
+(Add screenshot here)
+
+### Workflow Simulation
+(Add screenshot here)
+
+### Approval Process
+(Add screenshot here)
+
+### Final Result
+(Add screenshot here)
+
+---
+
+## 💡 Key Learnings
+
+- Understanding real-world healthcare workflows
+- Business process simulation using AI
+- Workflow visualization techniques
+- Interactive UI design
+- Gamification concepts
+- Rapid application development with Claude AI
+
+---
+
+## 🎯 Skills Gained
+
+- Workflow Design
+- Business Process Modeling
+- Healthcare Operations
+- Interactive Web Development
+- Prompt Engineering
+- AI-assisted Software Development
+
+---
+
+## 📈 Outcome
+
+Successfully created an interactive workflow simulator that transforms a complex healthcare authorization process into an engaging learning experience.
+
+---
+
+## 🙌 Acknowledgement
+
+This project is part of the **ABTalks 60 Days of Claude Challenge**, helping developers build practical AI-powered applications through daily hands-on projects.
+
+---
+
+#60DaysOfClaudeChallenge #ClaudeAI #AI #Healthcare #WorkflowAutomation #HTML #CSS #JavaScript #BuildInPublic #GitHub #LearningInPublic
