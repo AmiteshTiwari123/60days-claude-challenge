@@ -1,0 +1,105 @@
+# Day 27 – Prior Authorization Story Simulator
+
+## 📌 Project Overview
+
+Today I built an **AI-powered Prior Authorization Story Simulator** using Claude AI.
+
+Unlike a traditional workflow simulator, this application teaches healthcare prior authorization through **interactive storytelling, branching conversations, and real-world decision-making scenarios**.
+
+The project demonstrates how AI can create engaging educational experiences that simplify complex healthcare processes using modern web technologies.
+
+---
+
+## 🚀 Features
+
+- Interactive story-based learning
+- Branching conversations
+- Decision-based outcomes
+- Chat-style interface
+- Real-world healthcare scenarios
+- Multiple story paths
+- Responsive UI
+- Fully browser-based application
+- AI-generated using Claude AI
+
+---
+
+## 📖 Story Flow
+
+1. Patient visits the doctor
+2. Doctor recommends treatment
+3. Insurance requires Prior Authorization
+4. User chooses how to respond
+5. Additional documents may be requested
+6. Insurance reviews the case
+7. Final approval or rejection
+8. Story summary and learning outcome
+
+---
+
+## 🛠 Technologies Used
+
+- HTML5
+- CSS3
+- JavaScript
+- Claude AI
+
+---
+
+## 📸 Screenshots
+
+### Home Screen
+
+(Add Screenshot)
+
+### Interactive Conversation
+
+(Add Screenshot)
+
+### Decision Point
+
+(Add Screenshot)
+
+### Final Outcome
+
+(Add Screenshot)
+
+---
+
+## 💡 Key Learnings
+
+- Interactive storytelling
+- Conversational UI design
+- Branching decision systems
+- Healthcare workflow education
+- AI-assisted application development
+- User engagement through scenarios
+
+---
+
+## 🎯 Skills Gained
+
+- Story-based UX
+- Conversational Interfaces
+- Interactive Web Development
+- Prompt Engineering
+- Educational App Design
+- Healthcare Process Modeling
+
+---
+
+## 🌟 Outcome
+
+Successfully developed an AI-powered educational simulator that transforms a complex healthcare authorization process into an engaging interactive story.
+
+---
+
+## 📚 Acknowledgement
+
+This project is part of the **ABTalks 60 Days of Claude Challenge**, where participants build practical AI-powered applications and improve real-world development skills every day.
+
+---
+
+## 🔖 Tags
+
+#60DaysOfClaudeChallenge #ClaudeAI #AI #Healthcare #Storytelling #InteractiveLearning #HTML #CSS #JavaScript #WebDevelopment #BuildInPublic #GitHub #LearningInPublic
