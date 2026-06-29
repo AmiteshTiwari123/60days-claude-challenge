@@ -1,0 +1,91 @@
+Day 28 - Hospital Admission Readiness Simulator
+
+📌 Project Overview
+
+Today I built an AI-powered Hospital Admission Readiness Simulator using Claude AI. This interactive web application simulates the complete hospital admission workflow, helping users understand how healthcare providers assess patient readiness before admission.
+
+The simulator recreates real-world healthcare operations by evaluating insurance verification, prior authorization, medical documentation, bed availability, and overall admission readiness.
+
+---
+
+🚀 Features
+
+- Interactive hospital admission workflow
+- Patient information management
+- Insurance verification process
+- Prior Authorization tracking
+- Medical documentation validation
+- Admission readiness scoring
+- Risk identification and mitigation
+- Governance & compliance snapshot
+- Final admission decision dashboard
+- Responsive user interface
+
+---
+
+🔄 Workflow
+
+1. Patient Registration
+2. Physician Assessment
+3. Diagnosis Selection
+4. Admission Type Selection
+5. Insurance Verification
+6. Prior Authorization Review
+7. Documentation Validation
+8. Bed Availability Check
+9. Admission Readiness Score
+10. Risk Resolution
+11. Final Admission Decision
+
+---
+
+🛠 Technologies Used
+
+- HTML5
+- CSS3
+- JavaScript
+- Claude AI
+
+---
+
+💡 Key Learnings
+
+- Healthcare admission workflows
+- Prior Authorization process
+- Healthcare risk management
+- Interactive workflow simulation
+- Business process visualization
+- AI-assisted application development
+
+---
+
+🎯 Skills Gained
+
+- Workflow Simulation
+- Healthcare Operations
+- Interactive Dashboard Design
+- Prompt Engineering
+- Business Process Modeling
+- Frontend Development
+
+---
+
+📸 Screenshots
+
+- Home Dashboard
+- Admission Workflow
+- Readiness Analysis
+- Governance Snapshot
+- Final Decision Screen
+
+---
+
+🌟 Outcome
+
+Successfully developed an AI-powered simulator that demonstrates how hospitals evaluate patient admission readiness while reducing operational risks through structured workflows.
+
+---
+
+🙌 Acknowledgement
+
+Built as part of the ABTalks 60 Days of Claude Challenge to gain hands-on experience in building practical AI-powered applications.
