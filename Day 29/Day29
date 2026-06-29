@@ -1,0 +1,93 @@
+# Day 29 - Operation Lifeline: Supply Chain Crisis Lab
+
+## 📌 Project Overview
+
+Today I built an **AI-powered Supply Chain Crisis Simulator** using Claude AI. This interactive application places users in the role of an enterprise decision-maker responsible for managing a major supply chain disruption.
+
+The simulator demonstrates how AI can support strategic business decisions by balancing operational efficiency, supplier relationships, inventory management, customer satisfaction, and financial performance during crisis situations.
+
+---
+
+## 🚀 Features
+
+* Interactive supply chain crisis simulation
+* Random business scenario generation
+* Executive decision dashboard
+* Supplier negotiation rounds
+* AI-assisted operational recommendations
+* Business performance scoring
+* Risk assessment and mitigation
+* Inventory & logistics management
+* Executive KPI dashboard
+* Responsive React-based interface
+
+---
+
+## 🔄 Simulation Workflow
+
+1. Start Business Simulation
+2. Analyze Company Profile
+3. Identify Supply Chain Crisis
+4. Evaluate Business Risks
+5. Choose Crisis Response Strategy
+6. Negotiate with Suppliers
+7. Answer CEO Decision Questions
+8. Select AI Investments
+9. Monitor Business KPIs
+10. Review Final Executive Report
+
+---
+
+## 🛠 Technologies Used
+
+* React
+* HTML5
+* CSS3
+* JavaScript
+* Claude AI
+
+---
+
+## 💡 Key Learnings
+
+* Supply Chain Management
+* Enterprise Decision Making
+* Crisis Response Planning
+* Inventory Optimization
+* Supplier Negotiation
+* AI in Business Operations
+* Executive Dashboard Design
+* Business Process Simulation
+
+---
+
+## 🎯 Skills Gained
+
+* Business Strategy
+* Operational Risk Analysis
+* AI-Assisted Decision Making
+* React Application Development
+* Enterprise Workflow Design
+* Scenario-Based Simulation
+
+---
+
+## 📸 Screenshots
+
+* Dashboard
+* Crisis Scenario
+* Supplier Negotiation
+* Executive KPIs
+* Final Business Score
+
+---
+
+## 🌟 Outcome
+
+Successfully built an AI-powered enterprise simulation that demonstrates how organizations can respond to supply chain disruptions while balancing operational performance, financial impact, and customer satisfaction.
+
+---
+
+## 🙌 Acknowledgement
+
+Built as part of the **ABTalks 60 Days of Claude Challenge** to strengthen practical AI application development and enterprise workflow design skills.
