@@ -1,0 +1,53 @@
+# Day 30 – Supply Chain Optimizer
+
+## Overview
+Today I built a Supply Chain Optimizer simulation using Claude AI. The project focuses on improving an existing supply chain by making strategic decisions related to suppliers, warehouses, transportation, and inventory management.
+
+## Objectives
+- Understand supply chain optimization.
+- Learn business trade-offs.
+- Improve operational efficiency.
+- Analyze business metrics after each decision.
+
+## Key Concepts Learned
+- Supply Chain Optimization
+- Supplier Strategy
+- Factory Location Planning
+- Warehouse Management
+- Transportation Methods
+- Inventory Optimization
+- Business Trade-offs
+- AI in Supply Chain
+- Decision Making
+- Performance Metrics
+
+## Workflow
+1. Generated the React HTML application.
+2. Opened the simulator in the browser.
+3. Reviewed the company profile.
+4. Selected supplier strategy.
+5. Chose factory location.
+6. Selected warehouse strategy.
+7. Selected transportation method.
+8. Selected inventory strategy.
+9. Reviewed optimization dashboard.
+10. Analyzed overall supply chain score.
+
+## Key Learnings
+- Every supply chain decision affects cost, speed, and customer satisfaction.
+- AI helps analyze multiple business scenarios quickly.
+- Optimization is about improving existing systems instead of rebuilding them.
+- Balancing efficiency and risk is critical for business success.
+
+## Skills Practiced
+- Claude AI
+- React HTML
+- Business Strategy
+- Supply Chain Fundamentals
+- Operational Decision Making
+- Enterprise Simulation
+
+## Outcome
+Successfully completed Day 30 of the 60 Days of Claude Challenge by building a Supply Chain Optimizer simulation and understanding AI-powered operational decision making.
+
+#60DaysOfClaude #Day30 #ClaudeAI #SupplyChain #BusinessStrategy #AI #React #BuildInPublic
