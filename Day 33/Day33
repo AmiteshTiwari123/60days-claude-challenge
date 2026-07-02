@@ -1,0 +1,77 @@
+# Day 33 – Build a Media Integrity Analyzer
+
+## 📌 Project
+
+Today I built a **Media Integrity Analyzer**, an AI-powered educational application that helps users recognize misleading headlines, emotional manipulation, and media bias before believing or sharing information.
+
+---
+
+## 🎯 Objective
+
+Create an interactive application that enables users to:
+
+- Analyze news headlines
+- Detect emotional manipulation
+- Identify media bias
+- Improve critical thinking
+- Review media integrity metrics
+- Learn through interactive challenges
+
+---
+
+## 🛠️ Technologies Used
+
+- Claude AI
+- HTML
+- CSS
+- JavaScript
+
+---
+
+## 📚 Key Learnings
+
+- Headlines are designed to capture attention and can influence perception.
+- Emotional language often affects decision-making.
+- Critical thinking is essential before accepting information as truth.
+- AI can help educate users about misinformation through interactive learning.
+- Prompt Engineering enables faster development of educational AI applications.
+
+---
+
+## 🚀 Features
+
+- Headline Detective Challenge
+- Emotion Detection Challenge
+- Bias Analysis
+- Media Integrity Dashboard
+- Live Integrity Metrics
+- Interactive Learning Experience
+- Reusable Claude Prompts
+
+---
+
+## 💡 Skills Practiced
+
+- Media Literacy
+- Critical Thinking
+- Prompt Engineering
+- Educational AI Development
+- HTML, CSS & JavaScript
+
+---
+
+## 🎯 Outcome
+
+Successfully created a Media Integrity Analyzer that teaches users how to evaluate digital content, identify manipulation techniques, and think critically before trusting information.
+
+---
+
+## 🔥 Day 33 Completed
+
+Today's biggest lesson:
+
+**Don't believe everything you read. Analyze first, verify second, then decide.**
+
+AI isn't just for automation—it can also help people become smarter and more informed consumers of information.
+
+#60DaysOfClaudeChallenge
