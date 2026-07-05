@@ -1,0 +1,71 @@
+# Day 35 – Build Prompt Puzzle 🧩
+
+## Challenge
+Today I built a **Prompt Puzzle** application using Claude AI.
+
+This project transformed Prompt Engineering into an interactive game where users learn by solving prompt-building challenges instead of reading traditional tutorials.
+
+---
+
+## What I Learned
+
+### 🧩 Prompt Building
+- Understand the importance of Role
+- Add proper Context
+- Define Constraints
+- Use clear Formatting
+
+### ⚡ Prompt Optimization
+- Remove vague instructions
+- Eliminate unnecessary words
+- Make prompts more specific and effective
+
+### 🤖 Output Comparison
+- Compare weak prompts with optimized prompts
+- Observe how prompt quality directly impacts AI responses
+
+### 🎮 Gamified Learning
+- Learn Prompt Engineering through interactive puzzles and challenges
+- Improve prompting skills by practicing instead of memorizing
+
+---
+
+## Skills Practiced
+
+- Prompt Engineering
+- AI Communication
+- Critical Thinking
+- Problem Solving
+- HTML
+- CSS
+- JavaScript
+- Claude AI
+
+---
+
+## Key Takeaways
+
+✅ Better prompts produce better AI outputs.
+
+✅ Clear instructions reduce AI confusion.
+
+✅ Context is one of the most important parts of prompting.
+
+✅ Prompt Engineering is a practical skill that improves with continuous practice.
+
+---
+
+## Tech Stack
+
+- Claude AI
+- HTML
+- CSS
+- JavaScript
+
+---
+
+## Repository
+
+60 Days Claude Challenge
+
+Day 35 ✅
