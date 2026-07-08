@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-accent="navy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typing Speed Studio — Academic Edition</title>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg: #EAE7DD;
+  --bg-raised: #F4F2EA;
+  --card-border: #D8D3C4;
+  --text-primary: #23241F;
+  --text-muted: #8B8779;
+  --text-faint: #C7C2B2;
+  --accent: #22385A;
+  --accent-soft: #22385A22;
+  --accent-2: #A9812F;
+  --correct: #3F6B4C;
+  --error: #8C3A34;
+  --shadow: 0 1px 2px rgba(30,25,10,.06), 0 8px 24px rgba(30,25,10,.08);
+  --radius: 10px;
+  --serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --word-size: 1.55rem;
+}
+html[data-theme="dark"]{
+  --bg: #14161B;
+  --bg-raised: #1B1E25;
+  --card-border: #2C2F38;
+  --text-primary: #ECE8DC;
+  --text-muted: #83879A;
+  --text-faint: #3A3D47;
+  --accent: #C9A24A;
+  --accent-soft: #C9A24A22;
+  --accent-2: #7DA48C;
+  --correct: #7FB894;
+  --error: #D9776E;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.45);
+}
+html[data-accent="burgundy"]{ --accent: #7A2E3A; --accent-2: #B08D57; }
+html[data-theme="dark"][data-accent="burgundy"]{ --accent: #D98A8F; --accent-2: #C9A24A; }
+html[data-accent="forest"]{ --accent: #2F4C39; --accent-2: #A9812F; }
+html[data-theme="dark"][data-accent="forest"]{ --accent: #7FB894; --accent-2: #C9A24A; }
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text-primary);
+  font-family:var(--sans);
+  min-height:100vh;
+  transition:background .3s ease, color .3s ease;
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+a{color:inherit;}
+button{font-family:inherit;}
+.visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+
+/* ============ LAYOUT ============ */
+.wrap{max-width:920px; margin:0 auto; padding:28px 20px 80px;}
+header.topbar{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:16px; margin-bottom:28px; flex-wrap:wrap;
+}
+.brand{display:flex; flex-direction:column; gap:2px;}
+.brand .eyebrow{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent-2);
+}
+.brand h1{
+  font-family:var(--serif); font-size:1.85rem; margin:0; font-weight:600;
+  letter-spacing:.2px;
+}
+.topbar-controls{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.icon-btn{
+  width:38px; height:38px; border-radius:8px; border:1px solid var(--card-border);
+  background:var(--bg-raised); color:var(--text-primary); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  transition:transform .15s ease, border-color .15s ease;
+}
+.icon-btn:hover{border-color:var(--accent); transform:translateY(-1px);}
+.icon-btn[aria-pressed="true"]{ background:var(--accent-soft); border-color:var(--accent); }
+.swatch-row{display:flex; gap:6px; align-items:center; padding:2px 6px; border:1px solid var(--card-border); border-radius:8px; background:var(--bg-raised);}
+.swatch{width:16px; height:16px; border-radius:50%; cursor:pointer; border:2px solid transparent;}
+.swatch[data-accent-swatch="navy"]{background:#22385A;}
+.swatch[data-accent-swatch="burgundy"]{background:#7A2E3A;}
+.swatch[data-accent-swatch="forest"]{background:#2F4C39;}
+.swatch.active{border-color:var(--text-primary);}
+
+/* ============ CATALOG TABS (mode + target selector) ============ */
+.catalog{
+  background:var(--bg-raised); border:1px solid var(--card-border); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:14px 16px; margin-bottom:22px;
+  display:flex; flex-wrap:wrap; align-items:center; gap:14px; position:relative;
+}
+.catalog-tab{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+  position:absolute; top:-11px; left:18px; background:var(--accent); color:var(--bg-raised);
+  padding:3px 10px; border-radius:4px;
+}
+.mode-group{display:flex; gap:6px; background:var(--bg); border-radius:8px; padding:4px;}
+.mode-btn{
+  border:none; background:transparent; padding:7px 14px; border-radius:6px; cursor:pointer;
+  color:var(--text-muted); font-size:.88rem; font-weight:600;
+}
+.mode-btn.active{background:var(--accent); color:#fff;}
+html[data-theme="dark"] .mode-btn.active{color:#12141A;}
+.target-group{display:flex; gap:6px; flex-wrap:wrap;}
+.target-btn{
+  border:1px solid var(--card-border); background:var(--bg); color:var(--text-primary);
+  padding:6px 13px; border-radius:20px; cursor:pointer; font-family:var(--mono); font-size:.85rem;
+}
+.target-btn.active{border-color:var(--accent); background:var(--accent-soft); color:var(--accent); font-weight:700;}
+.divider-v{width:1px; align-self:stretch; background:var(--card-border);}
+.catalog-right{display:flex; gap:8px; margin-left:auto; align-items:center;}
+
+/* ============ STATS BAR ============ */
+.stats-bar{
+  display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:18px;
+}
+.stat-tile{
+  background:var(--bg-raised); border:1px solid var(--card-border); border-radius:8px;
+  padding:10px 12px; text-align:center;
+}
+.stat-tile .label{font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); font-family:var(--mono);}
+.stat-tile .value{font-family:var(--mono); font-size:1.25rem; font-weight:700; margin-top:2px;}
+.progress-track{height:5px; background:var(--card-border); border-radius:4px; overflow:hidden; margin-bottom:22px;}
+.progress-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .18s linear;}
+
+/* ============ TYPING CARD ============ */
+.type-card{
+  background:var(--bg-raised); border:1px solid var(--card-border); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:30px 34px; position:relative; margin-bottom:20px;
+  cursor:text;
+}
+.words-container{
+  font-family:var(--mono); font-size:var(--word-size); line-height:1.9; letter-spacing:.3px;
+  height:calc(1.9em * 3); overflow:hidden; position:relative; scroll-behavior:smooth;
+  filter:none;
+}
+.type-card.blurred .words-container{filter:blur(4px); opacity:.5;}
+.words-container .word{display:inline-block; margin:0 .28em 0 0;}
+.letter{color:var(--text-faint); position:relative;}
+.letter.correct{color:var(--text-primary);}
+.letter.incorrect{color:var(--error); text-decoration:underline; text-decoration-thickness:2px;}
+.letter.extra{color:var(--error); opacity:.65; font-style:italic;}
+.letter.missed{color:var(--text-faint); text-decoration:underline wavy var(--text-faint); text-decoration-thickness:1px;}
+.word.done .letter.pending{color:var(--text-faint);}
+.caret{
+  position:absolute; top:0; left:0; width:2px; height:1.5em; background:var(--accent);
+  border-radius:2px; animation:blink 1s steps(1) infinite; transition:transform .09s ease;
+  pointer-events:none;
+}
+@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+.paused-overlay{
+  position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+  flex-direction:column; gap:10px; font-family:var(--serif); font-size:1.3rem; color:var(--text-primary);
+}
+.paused-overlay.show{display:flex;}
+.paused-overlay .hint{font-family:var(--mono); font-size:.75rem; color:var(--text-muted);}
+
+.controls-row{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:8px;}
+.pill-btn{
+  border:1px solid var(--card-border); background:var(--bg-raised); color:var(--text-primary);
+  padding:8px 18px; border-radius:22px; cursor:pointer; font-size:.85rem; font-weight:600;
+  display:flex; align-items:center; gap:6px;
+}
+.pill-btn:hover{border-color:var(--accent); color:var(--accent);}
+.shortcut-hint{font-family:var(--mono); font-size:.68rem; color:var(--text-muted); text-align:center; margin-bottom:36px;}
+kbd{background:var(--bg); border:1px solid var(--card-border); border-radius:4px; padding:1px 6px; font-family:var(--mono);}
+
+/* ============ RESULTS PANEL ============ */
+#results{display:none; margin-top:10px;}
+#results.show{display:block; animation:riseIn .4s ease;}
+@keyframes riseIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+.results-head{display:flex; align-items:center; gap:22px; margin-bottom:22px; flex-wrap:wrap;}
+.grade-badge{
+  width:96px; height:96px; border-radius:50%; border:3px solid var(--accent);
+  display:flex; align-items:center; justify-content:center; font-family:var(--serif);
+  font-size:2.4rem; font-weight:700; color:var(--accent); flex-shrink:0; background:var(--accent-soft);
+}
+.results-head-text h2{font-family:var(--serif); margin:0 0 4px; font-size:1.5rem;}
+.results-head-text p{margin:0; color:var(--text-muted); font-size:.9rem;}
+.new-best-tag{
+  display:inline-block; margin-top:6px; background:var(--accent-2); color:#241a05; font-size:.72rem;
+  font-weight:700; padding:3px 9px; border-radius:12px; letter-spacing:.03em;
+}
+.metrics-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;}
+.metric-card{
+  background:var(--bg-raised); border:1px solid var(--card-border); border-radius:8px; padding:14px;
+}
+.metric-card .m-label{font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-family:var(--mono);}
+.metric-card .m-value{font-family:var(--mono); font-size:1.6rem; font-weight:700; margin-top:4px;}
+.metric-card .m-sub{font-size:.72rem; color:var(--text-muted); margin-top:2px;}
+
+.panel{
+  background:var(--bg-raised); border:1px solid var(--card-border); border-radius:var(--radius);
+  padding:18px 20px; margin-bottom:18px;
+}
+.panel h3{font-family:var(--serif); font-size:1.05rem; margin:0 0 12px; display:flex; align-items:center; gap:8px;}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+canvas{width:100%; display:block;}
+.chars-breakdown{display:flex; gap:14px; flex-wrap:wrap; font-family:var(--mono); font-size:.85rem;}
+.chars-breakdown span.dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px;}
+.kb-row{display:flex; justify-content:center; gap:5px; margin-bottom:5px;}
+.kb-key{
+  width:34px; height:34px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:.78rem; border:1px solid var(--card-border); background:var(--bg);
+  text-transform:uppercase; color:var(--text-muted);
+}
+.rhythm-row{display:flex; align-items:flex-end; gap:3px; height:70px;}
+.rhythm-bar{flex:1; background:var(--correct); border-radius:2px 2px 0 0; min-width:2px;}
+.rhythm-bar.bad{background:var(--error);}
+.badges-row{display:flex; gap:10px; flex-wrap:wrap;}
+.badge-chip{
+  display:flex; align-items:center; gap:6px; background:var(--accent-soft); border:1px solid var(--accent);
+  color:var(--accent); padding:7px 12px; border-radius:20px; font-size:.82rem; font-weight:600;
+}
+.summary-text{font-size:.95rem; line-height:1.7; color:var(--text-primary);}
+.summary-text strong{color:var(--accent);}
+.pb-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; font-family:var(--mono); font-size:.85rem;}
+.pb-item{display:flex; justify-content:space-between; border-bottom:1px dashed var(--card-border); padding-bottom:4px;}
+.percentile-bar{height:10px; border-radius:6px; background:var(--card-border); position:relative; margin-top:8px; overflow:hidden;}
+.percentile-fill{height:100%; background:linear-gradient(90deg,var(--accent-2),var(--accent));}
+
+/* ============ HISTORY ============ */
+.history-list{display:flex; flex-direction:column; gap:6px; max-height:240px; overflow:auto;}
+.history-row{
+  display:grid; grid-template-columns:1.4fr 1fr .8fr .8fr; gap:8px; align-items:center;
+  padding:8px 10px; border-radius:6px; font-size:.82rem; font-family:var(--mono);
+  border:1px solid var(--card-border);
+}
+.history-row .hd-date{color:var(--text-muted);}
+.history-empty{color:var(--text-muted); font-size:.85rem; font-style:italic;}
+.settings-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:.85rem;}
+.settings-row label{display:flex; align-items:center; gap:8px;}
+input[type="range"]{accent-color:var(--accent);}
+.small-btn{
+  border:1px solid var(--card-border); background:var(--bg); color:var(--text-muted); font-size:.75rem;
+  padding:5px 10px; border-radius:6px; cursor:pointer;
+}
+.small-btn:hover{border-color:var(--error); color:var(--error);}
+
+@media (max-width:720px){
+  .stats-bar{grid-template-columns:repeat(3,1fr);}
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .two-col{grid-template-columns:1fr;}
+  .type-card{padding:22px 18px;}
+  :root{--word-size: 1.25rem;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="eyebrow">Typing Speed Studio</span>
+      <h1>Academic Edition</h1>
+    </div>
+    <div class="topbar-controls">
+      <div class="swatch-row" role="group" aria-label="Accent color">
+        <button class="swatch active" data-accent-swatch="navy" aria-label="Navy accent"></button>
+        <button class="swatch" data-accent-swatch="burgundy" aria-label="Burgundy accent"></button>
+        <button class="swatch" data-accent-swatch="forest" aria-label="Forest accent"></button>
+      </div>
+      <button class="icon-btn" id="soundBtn" aria-pressed="true" title="Toggle sound">🔊</button>
+      <button class="icon-btn" id="themeBtn" title="Toggle dark mode">🌙</button>
+    </div>
+  </header>
+
+  <div class="catalog">
+    <span class="catalog-tab" id="catalogTab">Time · 30s</span>
+    <div class="mode-group" role="group" aria-label="Typing mode">
+      <button class="mode-btn active" data-mode="time">Time</button>
+      <button class="mode-btn" data-mode="words">Words</button>
+    </div>
+    <div class="divider-v"></div>
+    <div class="target-group" id="targetGroup"></div>
+    <div class="catalog-right">
+      <label class="settings-row" style="gap:6px;">
+        <span style="font-size:.7rem; color:var(--text-muted); font-family:var(--mono);">A⁻</span>
+        <input type="range" id="fontRange" min="18" max="34" value="25" style="width:90px;">
+        <span style="font-size:.7rem; color:var(--text-muted); font-family:var(--mono);">A⁺</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-tile"><div class="label">WPM</div><div class="value" id="statWpm">0</div></div>
+    <div class="stat-tile"><div class="label">Raw WPM</div><div class="value" id="statRaw">0</div></div>
+    <div class="stat-tile"><div class="label">Accuracy</div><div class="value" id="statAcc">100%</div></div>
+    <div class="stat-tile"><div class="label" id="statTimeLabel">Time Left</div><div class="value" id="statTime">0:30</div></div>
+    <div class="stat-tile"><div class="label">Mistakes</div><div class="value" id="statMistakes">0</div></div>
+    <div class="stat-tile"><div class="label">Streak</div><div class="value" id="statStreak">0</div></div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="type-card" id="typeCard">
+    <div class="words-container" id="wordsContainer" tabindex="0"></div>
+    <div class="caret" id="caret"></div>
+    <div class="paused-overlay" id="pausedOverlay">
+      <div>⏸ Paused</div>
+      <div class="hint">Press <kbd>Esc</kbd> to resume</div>
+    </div>
+  </div>
+  <input type="text" id="hiddenInput" class="visually-hidden" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+  <div class="controls-row">
+    <button class="pill-btn" id="restartBtn">↻ Restart</button>
+    <button class="pill-btn" id="pauseBtn">⏸ Pause</button>
+  </div>
+  <div class="shortcut-hint">Click the passage to focus · <kbd>Tab</kbd> restart · <kbd>Esc</kbd> pause/resume · <kbd>Space</kbd>/<kbd>Enter</kbd> confirm word</div>
+
+  <div id="results">
+    <div class="results-head">
+      <div class="grade-badge" id="gradeBadge">A</div>
+      <div class="results-head-text">
+        <h2 id="resultsTitle">Session Complete</h2>
+        <p id="resultsSub">Here's how this attempt measures up.</p>
+        <span class="new-best-tag" id="newBestTag" style="display:none;">★ New Personal Best</span>
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="m-label">WPM</div><div class="m-value" id="rWpm">0</div><div class="m-sub" id="rWpmSub">net speed</div></div>
+      <div class="metric-card"><div class="m-label">Raw WPM</div><div class="m-value" id="rRaw">0</div><div class="m-sub">before corrections</div></div>
+      <div class="metric-card"><div class="m-label">Accuracy</div><div class="m-value" id="rAcc">0%</div><div class="m-sub" id="rAccSub">keystrokes correct</div></div>
+      <div class="metric-card"><div class="m-label">Consistency</div><div class="m-value" id="rCons">0%</div><div class="m-sub">pace stability</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>Character Breakdown</h3>
+      <div class="chars-breakdown">
+        <span><span class="dot" style="background:var(--correct);"></span>Correct: <b id="cCorrect">0</b></span>
+        <span><span class="dot" style="background:var(--error);"></span>Incorrect: <b id="cIncorrect">0</b></span>
+        <span><span class="dot" style="background:var(--accent-2);"></span>Extra: <b id="cExtra">0</b></span>
+        <span><span class="dot" style="background:var(--text-faint);"></span>Missed: <b id="cMissed">0</b></span>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>WPM over time</h3>
+        <canvas id="wpmChart" height="140"></canvas>
+      </div>
+      <div class="panel">
+        <h3>Accuracy over time</h3>
+        <canvas id="accChart" height="140"></canvas>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Error Heatmap</h3>
+        <div id="heatmap"></div>
+      </div>
+      <div class="panel">
+        <h3>Typing Rhythm</h3>
+        <div class="rhythm-row" id="rhythmRow"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Achievements</h3>
+      <div class="badges-row" id="badgesRow"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Personal Bests</h3>
+        <div class="pb-grid" id="pbGrid"></div>
+      </div>
+      <div class="panel">
+        <h3>Estimated Percentile</h3>
+        <div style="font-family:var(--mono); font-size:1.3rem; font-weight:700;" id="percentileValue">—</div>
+        <div class="percentile-bar"><div class="percentile-fill" id="percentileFill" style="width:0%;"></div></div>
+        <div style="font-size:.72rem; color:var(--text-muted); margin-top:6px;">Approximate, based on typical typing-speed distributions.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Performance Summary</h3>
+      <div class="summary-text" id="summaryText"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Session History <button class="small-btn" id="clearHistoryBtn" style="margin-left:auto;">Clear</button></h3>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+</div>
+
+<div class="visually-hidden" id="ariaLive" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= ACADEMIC SENTENCE BANK ================= */
+const SENTENCES = [
+"The methodology employed in this study draws upon both quantitative and qualitative frameworks.",
+"Scholars have long debated the epistemological foundations of empirical inquiry.",
+"This paper argues that historical context is essential to interpreting primary sources accurately.",
+"The hypothesis was tested using a controlled experimental design across three cohorts.",
+"Critical theory examines the relationship between power structures and cultural production.",
+"A comprehensive literature review reveals significant gaps in the current understanding of the phenomenon.",
+"The peer review process ensures that published research meets rigorous academic standards.",
+"Statistical significance alone does not guarantee that a finding is practically meaningful.",
+"The dissertation committee evaluated the candidate on both originality and methodological soundness.",
+"Interdisciplinary collaboration often produces insights unavailable within a single field of study.",
+"The professor emphasized the importance of citing primary sources rather than secondary summaries.",
+"Correlation does not imply causation, a principle that undergraduates frequently overlook.",
+"The seminar focused on the ethical implications of emerging biomedical technologies.",
+"Longitudinal studies allow researchers to observe changes in behavior over extended periods.",
+"The thesis explores how socioeconomic factors influence access to higher education.",
+"A rigorous peer-reviewed journal requires transparent disclosure of research funding sources.",
+"The archive contained manuscripts that had not been examined by historians in decades.",
+"Qualitative interviews provided nuanced context that quantitative surveys alone could not capture.",
+"The conference invited keynote speakers from linguistics, philosophy, and cognitive science.",
+"Replication studies are essential for confirming the validity of experimental results.",
+"The abstract should concisely summarize the objectives, methods, and conclusions of the paper.",
+"Postcolonial theory reexamines historical narratives through the lens of marginalized voices.",
+"The laboratory's findings were later corroborated by an independent research team.",
+"Ethical review boards assess whether proposed studies adequately protect human participants.",
+"The bibliography included over two hundred sources spanning multiple academic disciplines.",
+"A well-constructed argument anticipates and addresses potential counterarguments.",
+"The graduate seminar analyzed competing theories of economic development in the twentieth century.",
+"Empirical evidence gathered over a decade supported the researcher's original hypothesis.",
+"The manuscript underwent substantial revision following feedback from three anonymous reviewers.",
+"Cognitive load theory suggests that instructional design should minimize extraneous mental effort.",
+"The philosopher's argument rests on a distinction between necessary and sufficient conditions.",
+"Fieldwork conducted in remote regions yielded data that reshaped the prevailing theory.",
+"The university library expanded its digital archive to include rare colonial-era documents.",
+"Meta-analyses aggregate findings across numerous studies to identify broader patterns.",
+"The syllabus required students to critically evaluate primary and secondary historical texts.",
+"A well-designed control group is essential to isolating the effect of the independent variable.",
+"The panel discussion addressed the reproducibility crisis facing several scientific disciplines.",
+"Comparative linguistics traces the evolution of grammatical structures across language families.",
+"The research grant funded a multi-year investigation into climate adaptation strategies.",
+"Theoretical frameworks provide the conceptual scaffolding upon which empirical research is built.",
+"The candidate defended her dissertation before a committee of five distinguished scholars.",
+"Archival research often requires months of painstaking transcription and cross-referencing.",
+"The article's conclusion acknowledges several limitations that warrant further investigation.",
+"Sociological studies of urban migration reveal complex patterns of assimilation and identity.",
+"The peer-reviewed findings challenged decades of conventional wisdom within the field.",
+"A robust experimental protocol accounts for confounding variables that might skew results.",
+"The historian meticulously cross-referenced court records with contemporary newspaper accounts.",
+"Neuroscientific research increasingly informs pedagogical approaches to early childhood education.",
+"The comparative study examined healthcare outcomes across several national systems.",
+"Rigorous peer critique, though occasionally uncomfortable, ultimately strengthens scholarly work."
+];
+
+const KB_ROWS = [
+  ['q','w','e','r','t','y','u','i','o','p'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['z','x','c','v','b','n','m']
+];
+
+/* ================= UTIL ================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+function erf(x){
+  const sign = x<0?-1:1; x=Math.abs(x);
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const t=1/(1+p*x);
+  const y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return sign*y;
+}
+function percentileFromWpm(wpm){
+  const mean=45, sd=18;
+  const z=(wpm-mean)/(sd*Math.SQRT2);
+  const p=0.5*(1+erf(z));
+  return clamp(Math.round(p*100),1,99);
+}
+function formatTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return m+":"+String(s).padStart(2,'0');
+}
+
+/* ================= STATE ================= */
+const state = {
+  mode:'time', targetSeconds:30, targetWords:25,
+  words:[], wordEls:[], wordResults:[],
+  sentenceQueue: shuffle(SENTENCES),
+  currentWordIndex:0,
+  started:false, finished:false, paused:false,
+  startTime:0, pausedDuration:0, pauseStart:0,
+  totals:{correct:0, incorrect:0, extra:0, missed:0},
+  streak:0, maxStreak:0,
+  mistypedKeys:{},
+  wpmSamples:[], accSamples:[],
+  lastSampleSecond:-1,
+  wordTimestamps:[], wordHadMistake:[],
+  lineOffsetSeen:0,
+  audioCtx:null,
+  settings:{theme:'light', accent:'navy', fontSize:25, sound:true}
+};
+
+/* ================= DOM ================= */
+const $ = (id)=>document.getElementById(id);
+const wordsContainer = $('wordsContainer');
+const caret = $('caret');
+const hiddenInput = $('hiddenInput');
+const typeCard = $('typeCard');
+const pausedOverlay = $('pausedOverlay');
+const ariaLive = $('ariaLive');
+
+/* ================= SETTINGS ================= */
+function loadSettings(){
+  try{
+    const raw = localStorage.getItem('tss_settings');
+    if(raw) Object.assign(state.settings, JSON.parse(raw));
+  }catch(e){}
+  document.documentElement.dataset.theme = state.settings.theme;
+  document.documentElement.dataset.accent = state.settings.accent;
+  document.documentElement.style.setProperty('--word-size', state.settings.fontSize+'px');
+  $('fontRange').value = state.settings.fontSize;
+  $('themeBtn').textContent = state.settings.theme==='dark' ? '☀️' : '🌙';
+  $('soundBtn').setAttribute('aria-pressed', state.settings.sound ? 'true':'false');
+  $('soundBtn').textContent = state.settings.sound ? '🔊' : '🔈';
+  document.querySelectorAll('.swatch').forEach(s=>{
+    s.classList.toggle('active', s.dataset.accentSwatch===state.settings.accent);
+  });
+}
+function saveSettings(){
+  try{ localStorage.setItem('tss_settings', JSON.stringify(state.settings)); }catch(e){}
+}
+
+$('themeBtn').addEventListener('click', ()=>{
+  state.settings.theme = state.settings.theme==='dark' ? 'light' : 'dark';
+  loadSettings(); saveSettings();
+});
+$('soundBtn').addEventListener('click', ()=>{
+  state.settings.sound = !state.settings.sound;
+  loadSettings(); saveSettings();
+});
+document.querySelectorAll('.swatch').forEach(s=>{
+  s.addEventListener('click', ()=>{
+    state.settings.accent = s.dataset.accentSwatch;
+    loadSettings(); saveSettings();
+  });
+});
+$('fontRange').addEventListener('input', (e)=>{
+  state.settings.fontSize = parseInt(e.target.value,10);
+  document.documentElement.style.setProperty('--word-size', state.settings.fontSize+'px');
+  saveSettings();
+  requestAnimationFrame(positionCaretForCurrent);
+});
+
+/* ================= SOUND ================= */
+function ensureAudio(){
+  if(!state.audioCtx){
+    try{ state.audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  }
+}
+function beep(freq, dur, vol){
+  if(!state.settings.sound || !state.audioCtx) return;
+  const ctx = state.audioCtx;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.frequency.value = freq;
+  osc.type = 'sine';
+  gain.gain.value = vol;
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+  osc.stop(ctx.currentTime+dur);
+}
+function soundTick(){ beep(720, 0.03, 0.03); }
+function soundError(){ beep(180, 0.08, 0.05); }
+function soundComplete(){
+  if(!state.settings.sound || !state.audioCtx) return;
+  [523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,0.25,0.045), i*110));
+}
+
+/* ================= WORD POOL ================= */
+function nextSentence(){
+  if(state.sentenceQueue.length===0) state.sentenceQueue = shuffle(SENTENCES);
+  return state.sentenceQueue.pop();
+}
+function ensureWords(minCount){
+  while(state.words.length < minCount){
+    state.words.push(...nextSentence().split(' '));
+  }
+}
+
+/* ================= RENDER ================= */
+function buildWordList(){
+  state.words = [];
+  state.wordResults = [];
+  if(state.mode==='words'){
+    ensureWords(state.targetWords);
+    state.words = state.words.slice(0, state.targetWords);
+  } else {
+    ensureWords(140);
+  }
+}
+
+function renderAll(){
+  wordsContainer.innerHTML = '';
+  state.wordEls = [];
+  state.words.forEach((w)=>{
+    const wordEl = document.createElement('span');
+    wordEl.className = 'word';
+    [...w].forEach(ch=>{
+      const l = document.createElement('span');
+      l.className='letter pending';
+      l.textContent = ch;
+      wordEl.appendChild(l);
+    });
+    wordsContainer.appendChild(wordEl);
+    state.wordEls.push(wordEl);
+  });
+  wordsContainer.scrollTop = 0;
+  state.lineOffsetSeen = 0;
+  positionCaretForCurrent();
+}
+
+function appendMoreWords(fromIndex){
+  for(let i=fromIndex;i<state.words.length;i++){
+    const w = state.words[i];
+    const wordEl = document.createElement('span');
+    wordEl.className='word';
+    [...w].forEach(ch=>{
+      const l=document.createElement('span');
+      l.className='letter pending';
+      l.textContent=ch;
+      wordEl.appendChild(l);
+    });
+    wordsContainer.appendChild(wordEl);
+    state.wordEls.push(wordEl);
+  }
+}
+
+function updateCurrentWordDisplay(){
+  const idx = state.currentWordIndex;
+  const wordEl = state.wordEls[idx];
+  if(!wordEl) return;
+  const word = state.words[idx];
+  const buffer = hiddenInput.value;
+  wordEl.innerHTML='';
+  const maxLen = Math.max(word.length, buffer.length);
+  for(let i=0;i<maxLen;i++){
+    const span = document.createElement('span');
+    if(i<word.length){
+      span.textContent = word[i];
+      if(i<buffer.length){
+        span.className = buffer[i]===word[i] ? 'letter correct' : 'letter incorrect';
+      } else {
+        span.className = 'letter pending';
+      }
+    } else {
+      span.textContent = buffer[i];
+      span.className = 'letter extra';
+    }
+    wordEl.appendChild(span);
+  }
+  positionCaret(wordEl, buffer.length);
+  maybeScroll(wordEl);
+}
+
+function positionCaret(wordEl, idx){
+  const containerRect = wordsContainer.getBoundingClientRect();
+  let x, y, h;
+  if(idx < wordEl.children.length){
+    const target = wordEl.children[idx];
+    const r = target.getBoundingClientRect();
+    x = r.left - containerRect.left + wordsContainer.scrollLeft;
+    y = r.top - containerRect.top + wordsContainer.scrollTop;
+    h = r.height;
+  } else if(wordEl.children.length>0){
+    const target = wordEl.children[wordEl.children.length-1];
+    const r = target.getBoundingClientRect();
+    x = r.right - containerRect.left + wordsContainer.scrollLeft;
+    y = r.top - containerRect.top + wordsContainer.scrollTop;
+    h = r.height;
+  } else {
+    const r = wordEl.getBoundingClientRect();
+    x = r.left - containerRect.left; y = r.top - containerRect.top; h = r.height || 30;
+  }
+  caret.style.height = h+'px';
+  caret.style.transform = 'translate('+x+'px,'+y+'px)';
+}
+function positionCaretForCurrent(){
+  const wordEl = state.wordEls[state.currentWordIndex];
+  if(wordEl) positionCaret(wordEl, hiddenInput.value.length);
+}
+
+function maybeScroll(wordEl){
+  const lineH = wordEl.offsetHeight;
+  const top = wordEl.offsetTop;
+  if(top > state.lineOffsetSeen + 1){
+    state.lineOffsetSeen = top - lineH;
+    wordsContainer.scrollTop = state.lineOffsetSeen;
+  }
+}
+
+function renderFinalizedWord(idx){
+  const wordEl = state.wordEls[idx];
+  const res = state.wordResults[idx];
+  const word = state.words[idx];
+  wordEl.innerHTML='';
+  wordEl.classList.add('done');
+  for(let i=0;i<word.length;i++){
+    const span=document.createElement('span');
+    span.textContent=word[i];
+    span.className='letter '+res.letterStates[i];
+    wordEl.appendChild(span);
+  }
+  res.extraChars.forEach(ch=>{
+    const span=document.createElement('span');
+    span.textContent=ch;
+    span.className='letter extra';
+    wordEl.appendChild(span);
+  });
+}
+
+/* ================= TEST LIFECYCLE ================= */
+function resetCounters(){
+  state.currentWordIndex=0; state.started=false; state.finished=false; state.paused=false;
+  state.startTime=0; state.pausedDuration=0;
+  state.totals={correct:0,incorrect:0,extra:0,missed:0};
+  state.streak=0; state.maxStreak=0;
+  state.mistypedKeys={};
+  state.wpmSamples=[]; state.accSamples=[]; state.lastSampleSecond=-1;
+  state.wordTimestamps=[]; state.wordHadMistake=[];
+  hiddenInput.value='';
+  if(state.timerInterval) clearInterval(state.timerInterval);
+}
+
+function startTest(){
+  resetCounters();
+  buildWordList();
+  renderAll();
+  $('results').classList.remove('show');
+  typeCard.classList.remove('blurred');
+  pausedOverlay.classList.remove('show');
+  updateStatTargetLabel();
+  updateLiveStats(0);
+  $('progressFill').style.width='0%';
+  hiddenInput.focus();
+}
+
+function beginTimingIfNeeded(){
+  if(!state.started){
+    ensureAudio();
+    state.started = true;
+    state.startTime = performance.now();
+    state.timerInterval = setInterval(tick, 100);
+  }
+}
+
+function tick(){
+  if(state.paused || state.finished) return;
+  const elapsed = (performance.now() - state.startTime - state.pausedDuration)/1000;
+  if(state.mode==='time' && elapsed >= state.targetSeconds){
+    updateLiveStats(state.targetSeconds);
+    finish(state.targetSeconds);
+    return;
+  }
+  updateLiveStats(elapsed);
+  const sec = Math.floor(elapsed);
+  if(sec !== state.lastSampleSecond){
+    state.lastSampleSecond = sec;
+    const live = computeLiveStats(elapsed);
+    state.wpmSamples.push(live.wpm);
+    state.accSamples.push(live.accuracy);
+  }
+}
+
+function computeLiveStats(elapsed){
+  let correct = state.totals.correct, incorrect = state.totals.incorrect, extra = state.totals.extra;
+  // include current word tentative
+  const idx = state.currentWordIndex;
+  const word = state.words[idx];
+  const buffer = hiddenInput.value;
+  if(word){
+    for(let i=0;i<buffer.length;i++){
+      if(i<word.length){ if(buffer[i]===word[i]) correct++; else incorrect++; }
+      else extra++;
+    }
+  }
+  const typed = correct+incorrect+extra;
+  const minutes = Math.max(elapsed/60, 1/600);
+  const wpm = elapsed < 0.5 ? 0 : clamp(Math.round((correct/5)/minutes),0,350);
+  const rawWpm = elapsed < 0.5 ? 0 : clamp(Math.round((typed/5)/minutes),0,350);
+  const accuracy = typed>0 ? Math.round((correct/typed)*100) : 100;
+  return {wpm, rawWpm, accuracy, correct, incorrect, extra, typed};
+}
+
+function updateLiveStats(elapsed){
+  const live = computeLiveStats(elapsed);
+  $('statWpm').textContent = live.wpm;
+  $('statRaw').textContent = live.rawWpm;
+  $('statAcc').textContent = live.accuracy+'%';
+  $('statMistakes').textContent = live.incorrect+live.extra;
+  $('statStreak').textContent = state.streak;
+
+  let progress, remainingLabel;
+  if(state.mode==='time'){
+    $('statTimeLabel').textContent='Time Left';
+    remainingLabel = formatTime(state.targetSeconds - elapsed);
+    progress = clamp((elapsed/state.targetSeconds)*100,0,100);
+  } else {
+    $('statTimeLabel').textContent='Words Left';
+    remainingLabel = Math.max(0, state.targetWords - state.currentWordIndex);
+    progress = clamp((state.currentWordIndex/state.targetWords)*100,0,100);
+  }
+  $('statTime').textContent = remainingLabel;
+  $('progressFill').style.width = progress+'%';
+}
+
+function updateStatTargetLabel(){
+  const label = state.mode==='time' ? ('Time · '+state.targetSeconds+'s') : ('Words · '+state.targetWords);
+  $('catalogTab').textContent = label;
+  if(state.mode==='time'){
+    $('statTimeLabel').textContent='Time Left';
+    $('statTime').textContent = formatTime(state.targetSeconds);
+  } else {
+    $('statTimeLabel').textContent='Words Left';
+    $('statTime').textContent = state.targetWords;
+  }
+}
+
+function tallyMistype(expected){
+  const key = expected.toLowerCase();
+  if(/[a-z]/.test(key)){
+    state.mistypedKeys[key] = (state.mistypedKeys[key]||0)+1;
+  }
+}
+
+function finalizeWordAt(idx, isFinishCutoff){
+  const word = state.words[idx];
+  const buffer = hiddenInput.value;
+  if(!word) return;
+  let correct=0, incorrect=0, extra=0, missed=0;
+  const letterStates=[];
+  for(let i=0;i<word.length;i++){
+    if(i<buffer.length){
+      if(buffer[i]===word[i]){ correct++; letterStates.push('correct'); }
+      else { incorrect++; letterStates.push('incorrect'); tallyMistype(word[i]); }
+    } else {
+      missed++; letterStates.push('missed');
+    }
+  }
+  let extraChars=[];
+  if(buffer.length>word.length){
+    extra = buffer.length-word.length;
+    extraChars = buffer.slice(word.length).split('');
+  }
+  state.wordResults[idx] = {letterStates, extraChars};
+  state.totals.correct+=correct; state.totals.incorrect+=incorrect;
+  state.totals.extra+=extra; state.totals.missed+=missed;
+
+  const hadMistake = incorrect>0 || extra>0 || missed>0;
+  if(!hadMistake){ state.streak++; state.maxStreak=Math.max(state.maxStreak, state.streak); }
+  else { state.streak = 0; }
+  state.wordTimestamps.push(performance.now());
+  state.wordHadMistake.push(hadMistake);
+
+  renderFinalizedWord(idx);
+  if(hadMistake) soundError();
+}
+
+function confirmWord(){
+  if(state.paused || state.finished) return;
+  const buffer = hiddenInput.value;
+  if(buffer.length===0) return; // ignore stray space with nothing typed
+  beginTimingIfNeeded();
+  finalizeWordAt(state.currentWordIndex, false);
+  state.currentWordIndex++;
+  hiddenInput.value='';
+
+  if(state.mode==='words' && state.currentWordIndex>=state.targetWords){
+    finish();
+    return;
+  }
+  if(state.mode==='time' && state.words.length - state.currentWordIndex < 25){
+    const from = state.words.length;
+    ensureWords(state.words.length+120);
+    appendMoreWords(from);
+  }
+  updateCurrentWordDisplay();
+}
+
+function finish(overrideElapsed){
+  if(state.finished) return;
+  state.finished = true;
+  if(state.timerInterval) clearInterval(state.timerInterval);
+  // finalize any in-progress word so partial typing counts
+  if(hiddenInput.value.length>0 && state.words[state.currentWordIndex]){
+    finalizeWordAt(state.currentWordIndex, true);
+  }
+  const elapsedSeconds = overrideElapsed!==undefined ? overrideElapsed :
+    Math.max(0.5, (performance.now()-state.startTime-state.pausedDuration)/1000);
+
+  const t = state.totals;
+  const totalTyped = t.correct+t.incorrect+t.extra;
+  const minutes = elapsedSeconds/60;
+  const wpm = clamp(Math.round((t.correct/5)/minutes),0,350);
+  const rawWpm = clamp(Math.round((totalTyped/5)/minutes),0,350);
+  const accuracy = totalTyped>0 ? Math.round((t.correct/totalTyped)*100) : 100;
+
+  let consistency = 100;
+  if(state.wpmSamples.length>=2){
+    const mean = state.wpmSamples.reduce((a,b)=>a+b,0)/state.wpmSamples.length;
+    if(mean>0){
+      const variance = state.wpmSamples.reduce((a,b)=>a+(b-mean)*(b-mean),0)/state.wpmSamples.length;
+      const sd = Math.sqrt(variance);
+      consistency = clamp(Math.round(100-(sd/mean*100)),0,100);
+    }
+  }
+
+  const completion = state.mode==='words'
+    ? clamp(Math.round((state.currentWordIndex/state.targetWords)*100),0,100)
+    : 100;
+
+  const session = {
+    date: new Date().toISOString(),
+    mode: state.mode,
+    target: state.mode==='time' ? state.targetSeconds : state.targetWords,
+    wpm, rawWpm, accuracy, consistency, completion,
+    correct:t.correct, incorrect:t.incorrect, extra:t.extra, missed:t.missed,
+    mistakes: t.incorrect+t.extra,
+    duration: Math.round(elapsedSeconds),
+    maxStreak: state.maxStreak,
+    mistypedKeys: Object.assign({}, state.mistypedKeys),
+    wpmSamples: state.wpmSamples.slice(),
+    accSamples: state.accSamples.slice()
+  };
+
+  soundComplete();
+  const history = loadHistory();
+  const priorBest = history
+    .filter(s=>s.mode===session.mode && s.target===session.target)
+    .reduce((max,s)=>Math.max(max,s.wpm), 0);
+  const isNewBest = session.wpm > priorBest && priorBest>0 || (history.filter(s=>s.mode===session.mode&&s.target===session.target).length===0);
+
+  history.push(session);
+  if(history.length>200) history.splice(0, history.length-200);
+  saveHistory(history);
+
+  renderResults(session, isNewBest && priorBest>0, history);
+  renderHistoryList(history);
+
+  typeCard.classList.add('blurred');
+  ariaLive.textContent = 'Test complete. '+wpm+' words per minute, '+accuracy+' percent accuracy.';
+}
+
+/* ================= PAUSE / RESTART ================= */
+function togglePause(){
+  if(!state.started || state.finished) return;
+  state.paused = !state.paused;
+  if(state.paused){
+    state.pauseStart = performance.now();
+    pausedOverlay.classList.add('show');
+    typeCard.classList.add('blurred');
+    hiddenInput.blur();
+    ariaLive.textContent='Paused.';
+  } else {
+    state.pausedDuration += performance.now()-state.pauseStart;
+    pausedOverlay.classList.remove('show');
+    typeCard.classList.remove('blurred');
+    hiddenInput.focus();
+    ariaLive.textContent='Resumed.';
+  }
+}
+
+$('restartBtn').addEventListener('click', startTest);
+$('pauseBtn').addEventListener('click', togglePause);
+
+/* ================= INPUT HANDLING ================= */
+wordsContainer.addEventListener('click', ()=>hiddenInput.focus());
+typeCard.addEventListener('click', ()=>hiddenInput.focus());
+
+hiddenInput.addEventListener('keydown', (e)=>{
+  if(state.finished) return;
+  if(e.key==='Escape'){ e.preventDefault(); togglePause(); return; }
+  if(e.key==='Tab'){ e.preventDefault(); startTest(); return; }
+  if(state.paused) { e.preventDefault(); return; }
+  if(e.key===' ' || e.key==='Enter'){ e.preventDefault(); confirmWord(); return; }
+});
+
+hiddenInput.addEventListener('input', ()=>{
+  if(state.finished || state.paused) return;
+  beginTimingIfNeeded();
+  updateCurrentWordDisplay();
+  const live = computeLiveStats((performance.now()-state.startTime-state.pausedDuration)/1000);
+  updateLiveStats((performance.now()-state.startTime-state.pausedDuration)/1000);
+  if(state.settings.sound) soundTick();
+});
+
+document.addEventListener('keydown', (e)=>{
+  if(document.activeElement!==hiddenInput){
+    if(e.key==='Tab'){ e.preventDefault(); startTest(); hiddenInput.focus(); }
+    else if(e.key==='Escape'){ e.preventDefault(); togglePause(); }
+    else if(e.key.length===1){ hiddenInput.focus(); }
+  }
+});
+
+/* ================= MODE / TARGET SELECTION ================= */
+const TIME_TARGETS=[15,30,60,120];
+const WORD_TARGETS=[25,50,100,250];
+
+function renderTargetButtons(){
+  const group = $('targetGroup');
+  group.innerHTML='';
+  const list = state.mode==='time'?TIME_TARGETS:WORD_TARGETS;
+  const current = state.mode==='time'?state.targetSeconds:state.targetWords;
+  list.forEach(v=>{
+    const btn = document.createElement('button');
+    btn.className='target-btn'+(v===current?' active':'');
+    btn.textContent = state.mode==='time'? v+'s' : v;
+    btn.addEventListener('click', ()=>{
+      if(state.mode==='time') state.targetSeconds=v; else state.targetWords=v;
+      renderTargetButtons();
+      updateStatTargetLabel();
+      startTest();
+    });
+    group.appendChild(btn);
+  });
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    renderTargetButtons();
+    updateStatTargetLabel();
+    startTest();
+  });
+});
+
+/* ================= RESULTS RENDERING ================= */
+function gradeFromScore(wpm,accuracy,consistency){
+  const normSpeed = clamp(wpm/1.2,0,100);
+  const score = normSpeed*0.5 + accuracy*0.35 + consistency*0.15;
+  if(score>=95) return 'A+';
+  if(score>=88) return 'A';
+  if(score>=82) return 'A−';
+  if(score>=76) return 'B+';
+  if(score>=70) return 'B';
+  if(score>=64) return 'B−';
+  if(score>=56) return 'C+';
+  if(score>=48) return 'C';
+  if(score>=36) return 'D';
+  return 'F';
+}
+
+function computeBadges(session, isNewBest, history){
+  const badges=[];
+  if(isNewBest) badges.push('★ New Personal Best');
+  if(session.wpm>=100) badges.push('🏛 Century Club');
+  else if(session.wpm>=80) badges.push('📈 Advanced Typist');
+  if(session.accuracy>=98) badges.push('🎯 Sharpshooter');
+  if(session.consistency>=90) badges.push('🧭 Steady Hand');
+  if(session.maxStreak>=25) badges.push('🔥 Flawless Streak');
+  if(session.mistakes===0) badges.push('✨ Perfect Session');
+  if(history.length===1) badges.push('🌱 First Steps');
+  if(session.mode==='time' && session.target===120) badges.push('⏳ Marathon Scholar');
+  if(badges.length===0) badges.push('📚 Keep Practicing');
+  return badges;
+}
+
+function buildSummary(session){
+  const strengths=[], weaknesses=[];
+  if(session.accuracy>=97) strengths.push('excellent accuracy');
+  else if(session.accuracy<90) weaknesses.push('accuracy could improve');
+  if(session.consistency>=85) strengths.push('very consistent pacing');
+  else if(session.consistency<60) weaknesses.push('pacing varies noticeably between words');
+  if(session.wpm>=70) strengths.push('strong overall speed');
+  else if(session.wpm<35) weaknesses.push('speed is still building');
+  if(session.extra>session.incorrect && session.extra>0) weaknesses.push('a tendency to overtype past word endings');
+
+  const sortedKeys = Object.entries(session.mistypedKeys).sort((a,b)=>b[1]-a[1]);
+  let keyNote='';
+  if(sortedKeys.length){
+    const top = sortedKeys.slice(0,3).map(([k,c])=>'"'+k+'" ('+c+')').join(', ');
+    keyNote = ' The letters most often mistyped were '+top+'.';
+  }
+
+  let text='';
+  if(strengths.length) text += 'This session\'s strengths: <strong>'+strengths.join(', ')+'</strong>. ';
+  if(weaknesses.length) text += 'Areas to work on: <strong>'+weaknesses.join(', ')+'</strong>. ';
+  text += keyNote;
+  if(session.accuracy<92){
+    text += ' Try slowing down slightly on longer words — prioritizing accuracy tends to raise net WPM faster than chasing raw speed.';
+  } else if(session.consistency<70){
+    text += ' Aim for a steadier rhythm rather than bursts of speed followed by pauses.';
+  } else {
+    text += ' Keep up the deliberate pace — this is a strong, well-rounded result.';
+  }
+  return text;
+}
+
+function drawLineChart(canvas, data, color){
+  const dpr = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.max(rect.width, 260), h = canvas.height;
+  canvas.width = w*dpr; canvas.height = h*dpr;
+  canvas.style.height = h+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  const styles = getComputedStyle(document.documentElement);
+  const gridColor = styles.getPropertyValue('--card-border').trim();
+  ctx.strokeStyle = gridColor; ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){
+    const y = 10 + (h-30)*(i/3);
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+  }
+  if(data.length===0){
+    ctx.fillStyle = styles.getPropertyValue('--text-muted').trim();
+    ctx.font='13px sans-serif';
+    ctx.fillText('Not enough data', 10, h/2);
+    return;
+  }
+  const max = Math.max(...data, 1);
+  const min = 0;
+  const stepX = data.length>1 ? w/(data.length-1) : w;
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x = i*stepX;
+    const y = 10 + (h-30)*(1-((v-min)/(max-min||1)));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle = color; ctx.lineWidth=2.2; ctx.lineJoin='round'; ctx.stroke();
+
+  ctx.lineTo(w,h-20); ctx.lineTo(0,h-20); ctx.closePath();
+  ctx.fillStyle = color+'22'; ctx.fill();
+
+  ctx.fillStyle = styles.getPropertyValue('--text-muted').trim();
+  ctx.font='11px monospace';
+  ctx.fillText(Math.round(max), 4, 18);
+  ctx.fillText('0', 4, h-24);
+}
+
+function renderHeatmap(mistypedKeys){
+  const container = $('heatmap');
+  container.innerHTML='';
+  const max = Math.max(1, ...Object.values(mistypedKeys));
+  KB_ROWS.forEach(row=>{
+    const rowEl = document.createElement('div');
+    rowEl.className='kb-row';
+    row.forEach(k=>{
+      const count = mistypedKeys[k]||0;
+      const key = document.createElement('div');
+      key.className='kb-key';
+      key.textContent=k;
+      const intensity = count/max;
+      if(count>0){
+        key.style.background = 'color-mix(in srgb, var(--error) '+Math.round(intensity*80)+'%, var(--bg))';
+        key.style.color = intensity>0.4 ? '#fff' : 'var(--text-primary)';
+        key.title = count+' mistake(s)';
+      }
+      rowEl.appendChild(key);
+    });
+    container.appendChild(rowEl);
+  });
+}
+
+function renderRhythm(){
+  const row = $('rhythmRow');
+  row.innerHTML='';
+  const stamps = state.wordTimestamps.slice(-30);
+  const mistakes = state.wordHadMistake.slice(-30);
+  if(stamps.length<2){ row.innerHTML='<span class="history-empty">Not enough data yet.</span>'; return; }
+  const deltas=[];
+  for(let i=1;i<stamps.length;i++) deltas.push(stamps[i]-stamps[i-1]);
+  const maxD = Math.max(...deltas);
+  deltas.forEach((d,i)=>{
+    const bar=document.createElement('div');
+    const heightPct = clamp(100-((d/maxD)*90),10,100);
+    bar.className='rhythm-bar'+(mistakes[i+1]?' bad':'');
+    bar.style.height=heightPct+'%';
+    row.appendChild(bar);
+  });
+}
+
+function renderResults(session, isNewBest, history){
+  const grade = gradeFromScore(session.wpm, session.accuracy, session.consistency);
+  $('gradeBadge').textContent = grade;
+  $('resultsTitle').textContent = session.mode==='time'
+    ? ('Time Trial · '+session.target+'s complete')
+    : ('Word Sprint · '+session.target+' words complete');
+  $('resultsSub').textContent = new Date(session.date).toLocaleString();
+  $('newBestTag').style.display = isNewBest ? 'inline-block':'none';
+
+  $('rWpm').textContent = session.wpm;
+  $('rRaw').textContent = session.rawWpm;
+  $('rAcc').textContent = session.accuracy+'%';
+  $('rCons').textContent = session.consistency+'%';
+  $('rAccSub').textContent = (session.correct+session.incorrect+session.extra)+' keystrokes';
+  $('rWpmSub').textContent = 'over '+session.duration+'s';
+
+  $('cCorrect').textContent = session.correct;
+  $('cIncorrect').textContent = session.incorrect;
+  $('cExtra').textContent = session.extra;
+  $('cMissed').textContent = session.missed;
+
+  drawLineChart($('wpmChart'), session.wpmSamples, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+  drawLineChart($('accChart'), session.accSamples, getComputedStyle(document.documentElement).getPropertyValue('--correct').trim());
+  renderHeatmap(session.mistypedKeys);
+  renderRhythm();
+
+  const badges = computeBadges(session, isNewBest, history);
+  $('badgesRow').innerHTML = badges.map(b=>'<span class="badge-chip">'+b+'</span>').join('');
+
+  const pct = percentileFromWpm(session.wpm);
+  $('percentileValue').textContent = 'Top '+(100-pct)+'% (est.)';
+  $('percentileFill').style.width = pct+'%';
+
+  const sameConfig = history.filter(s=>s.mode===session.mode && s.target===session.target);
+  const bestWpm = Math.max(...sameConfig.map(s=>s.wpm));
+  const bestAcc = Math.max(...sameConfig.map(s=>s.accuracy));
+  const bestOverall = history.length ? Math.max(...history.map(s=>s.wpm)) : session.wpm;
+  $('pbGrid').innerHTML =
+    '<div class="pb-item"><span>Best WPM (this mode)</span><b>'+bestWpm+'</b></div>'+
+    '<div class="pb-item"><span>Best Accuracy (this mode)</span><b>'+bestAcc+'%</b></div>'+
+    '<div class="pb-item"><span>All-time Best WPM</span><b>'+bestOverall+'</b></div>'+
+    '<div class="pb-item"><span>Sessions Logged</span><b>'+history.length+'</b></div>';
+
+  $('summaryText').innerHTML = buildSummary(session);
+
+  $('results').classList.add('show');
+}
+
+/* ================= HISTORY ================= */
+function loadHistory(){
+  try{
+    const raw = localStorage.getItem('tss_history');
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveHistory(h){
+  try{ localStorage.setItem('tss_history', JSON.stringify(h)); }catch(e){}
+}
+function renderHistoryList(history){
+  const list = $('historyList');
+  if(!history.length){
+    list.innerHTML = '<div class="history-empty">No sessions yet — finish a test to see it here.</div>';
+    return;
+  }
+  const recent = history.slice(-15).reverse();
+  list.innerHTML = recent.map(s=>{
+    const modeLabel = s.mode==='time' ? (s.target+'s') : (s.target+'w');
+    const d = new Date(s.date);
+    return '<div class="history-row">'+
+      '<span class="hd-date">'+d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</span>'+
+      '<span>'+modeLabel+'</span>'+
+      '<span>'+s.wpm+' wpm</span>'+
+      '<span>'+s.accuracy+'%</span>'+
+      '</div>';
+  }).join('');
+}
+$('clearHistoryBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all session history? This cannot be undone.')){
+    saveHistory([]);
+    renderHistoryList([]);
+  }
+});
+
+/* ================= INIT ================= */
+function init(){
+  loadSettings();
+  renderTargetButtons();
+  renderHistoryList(loadHistory());
+  startTest();
+  window.addEventListener('resize', ()=>{ requestAnimationFrame(positionCaretForCurrent); });
+}
+init();
+})();
+</script>
+</body>
+</html>
