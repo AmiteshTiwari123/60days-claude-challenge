@@ -1,0 +1,29 @@
+# Day 38 – Build Typing Speed Studio
+
+## 📌 Overview
+On Day 38, I built a **Typing Speed Studio**, a premium typing practice platform using Claude AI. The project focuses on adaptive learning, real-time analytics, and a modern commercial-grade UI/UX.
+
+## 🎯 Objectives
+- Build a complete typing speed application.
+- Create responsive and premium UI.
+- Add real-time typing statistics.
+- Implement adaptive learning features.
+- Improve frontend development using AI prompts.
+
+## 🛠️ Technologies Used
+- Claude AI
+- HTML5
+- CSS3
+- JavaScript
+
+## 📚 Key Learnings
+- Creating full browser applications using AI prompts.
+- Designing premium user interfaces.
+- Implementing live analytics dashboards.
+- Building adaptive learning experiences.
+- Improving prompt engineering for frontend development.
+
+## 🚀 Outcome
+Successfully developed a modern Typing Speed Studio with interactive practice modes, analytics, and an enhanced user experience while strengthening AI-assisted development skills.
+
+#60DaysOfClaude #Day38 #ClaudeAI #PromptEngineering #HTML #CSS #JavaScript #WebDevelopment #AI
