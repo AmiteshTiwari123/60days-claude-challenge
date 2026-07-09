@@ -1,0 +1,29 @@
+# Day 39 – Build PDF Splitter & Merger
+
+## 📌 Overview
+On Day 39 of the 60 Days of Claude Challenge, I built a premium browser-based PDF Splitter & Merger application using Claude AI. The project focused on document processing, modern UI/UX, and client-side PDF management.
+
+## 🎯 Objectives
+- Build a browser-based PDF utility.
+- Implement PDF Split and Merge features.
+- Preview processed PDFs before download.
+- Create a clean and responsive interface.
+- Improve prompt engineering for productivity applications.
+
+## 🛠️ Technologies Used
+- Claude AI
+- HTML5
+- CSS3
+- JavaScript
+
+## 📚 Key Learnings
+- Building complete productivity applications using AI prompts.
+- Processing PDF files directly in the browser.
+- Creating premium UI/UX for utility tools.
+- Enhancing prompt engineering skills.
+- Improving frontend development workflow.
+
+## 🚀 Outcome
+Successfully developed a modern PDF Splitter & Merger with an intuitive interface, browser-based processing, and efficient document management features.
+
+#60DaysOfClaude #Day39 #ClaudeAI #PromptEngineering #HTML #CSS #JavaScript #WebDevelopment #PDF #BuildInPublic
