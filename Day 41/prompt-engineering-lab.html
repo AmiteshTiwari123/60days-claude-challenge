@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Engineering Lab — Interactive Learning Studio</title>
+<style>
+  :root{
+    --bg: #0B0E14;
+    --panel: #131822;
+    --panel-2: #1A2130;
+    --panel-3: #0F1420;
+    --border: #262F42;
+    --text: #E9E4D8;
+    --text-dim: #8B93A6;
+    --text-faint: #565F75;
+    --crimson: #C1395A;
+    --crimson-dim: #C1395A33;
+    --amber: #E8A33D;
+    --amber-dim: #E8A33D26;
+    --teal: #2FB8A6;
+    --teal-dim: #2FB8A626;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+    --mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+    --radius: 10px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, #141A28 0%, transparent 55%),
+      radial-gradient(ellipse at bottom right, #12181F 0%, transparent 50%),
+      var(--bg);
+    color:var(--text);
+    font-family: var(--mono);
+    font-size:15px;
+    line-height:1.65;
+    min-height:100vh;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+  a{color:var(--teal);}
+  ::selection{ background:var(--amber-dim); color:var(--amber); }
+
+  /* ---------- Layout ---------- */
+  #app{ display:grid; grid-template-columns: 260px 1fr; min-height:100vh; }
+  @media (max-width: 900px){ #app{ grid-template-columns: 1fr; } }
+
+  header.topbar{
+    grid-column: 1 / -1;
+    display:flex; align-items:center; gap:16px;
+    padding:14px 22px;
+    background:linear-gradient(180deg, #10141D 0%, #0D111A 100%);
+    border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:50;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .mark{
+    width:30px; height:30px; border-radius:6px;
+    background: linear-gradient(135deg, var(--teal), var(--amber));
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-weight:700; color:#0B0E14; font-size:15px;
+    flex:none;
+  }
+  .brand .name{ font-family:var(--serif); font-size:18px; letter-spacing:.3px; }
+  .brand .name em{ font-style:normal; color:var(--amber); }
+  .topbar .spacer{ flex:1; }
+  .xp-badge{
+    display:flex; align-items:center; gap:8px;
+    background:var(--panel-2); border:1px solid var(--border);
+    padding:6px 12px; border-radius:20px; font-size:12.5px; color:var(--amber);
+    white-space:nowrap;
+  }
+  .xp-badge .dot{ width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  .progress-wrap{ flex:1; max-width:280px; display:flex; align-items:center; gap:10px; }
+  .progress-track{ flex:1; height:6px; background:var(--panel-2); border-radius:4px; overflow:hidden; border:1px solid var(--border); }
+  .progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--teal), var(--amber)); transition:width .5s ease; }
+  .progress-label{ font-size:11px; color:var(--text-dim); white-space:nowrap; }
+  .menu-toggle{ display:none; background:none; border:1px solid var(--border); color:var(--text); border-radius:6px; padding:6px 10px; cursor:pointer; font-family:var(--mono); }
+  @media (max-width:900px){ .menu-toggle{ display:block; } .progress-wrap{ display:none; } }
+
+  nav.sidebar{
+    background:var(--panel-3);
+    border-right:1px solid var(--border);
+    padding:18px 12px;
+    height: calc(100vh - 61px);
+    position:sticky; top:61px; overflow-y:auto;
+  }
+  @media (max-width:900px){
+    nav.sidebar{ position:fixed; left:-280px; top:61px; width:260px; z-index:60; transition:left .25s ease; box-shadow: 10px 0 30px #00000080;}
+    nav.sidebar.open{ left:0; }
+  }
+  .nav-eyebrow{ font-size:10.5px; letter-spacing:1.5px; color:var(--text-faint); text-transform:uppercase; padding:10px 10px 6px; }
+  .nav-item{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 10px; border-radius:8px; cursor:pointer;
+    color:var(--text-dim); font-size:13px; margin-bottom:2px;
+    border:1px solid transparent;
+  }
+  .nav-item:hover{ background:var(--panel-2); color:var(--text); }
+  .nav-item.active{ background:var(--teal-dim); color:var(--teal); border-color:#2FB8A640; }
+  .nav-item.locked{ opacity:.4; cursor:not-allowed; }
+  .nav-item .idx{ font-family:var(--serif); font-size:11px; color:var(--text-faint); width:18px; flex:none; }
+  .nav-item.active .idx{ color:var(--teal); }
+  .nav-item .lock-icon{ margin-left:auto; font-size:11px; }
+  .nav-item .check{ margin-left:auto; color:var(--teal); font-size:12px; }
+
+  main.content{ padding: 34px 6vw 90px; max-width:920px; }
+  @media (max-width:900px){ main.content{ padding:24px 20px 70px; } }
+  .panel{ display:none; animation: fadeIn .4s ease; }
+  .panel.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .eyebrow{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--amber); margin-bottom:10px; }
+  h1.page-title{ font-family:var(--serif); font-size:clamp(28px,4vw,42px); font-weight:400; line-height:1.15; margin-bottom:14px; }
+  h1.page-title em{ font-style:normal; color:var(--teal); }
+  h2.section-title{ font-family:var(--serif); font-size:26px; font-weight:400; margin:36px 0 14px; padding-top:14px; border-top:1px solid var(--border); }
+  h2.section-title:first-of-type{ border-top:none; padding-top:0; }
+  h3.sub-title{ font-family:var(--serif); font-size:19px; font-weight:400; color:var(--amber); margin:24px 0 10px; }
+  p{ color:var(--text-dim); margin-bottom:14px; max-width:70ch; }
+  p.lead{ color:var(--text); font-size:16px; max-width:65ch; }
+  ul.bullets{ margin:0 0 16px 0; padding-left:0; list-style:none; }
+  ul.bullets li{ color:var(--text-dim); padding-left:22px; position:relative; margin-bottom:8px; max-width:65ch; }
+  ul.bullets li::before{ content:'—'; position:absolute; left:0; color:var(--teal); }
+
+  /* ---------- Console / signature element ---------- */
+  .console{
+    background:var(--panel-3); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; margin:18px 0; box-shadow: 0 20px 50px -25px #000000a0;
+  }
+  .console-head{
+    display:flex; align-items:center; gap:8px; padding:9px 14px;
+    background:var(--panel-2); border-bottom:1px solid var(--border);
+  }
+  .console-head .cdot{ width:9px; height:9px; border-radius:50%; }
+  .console-head .cdot:nth-child(1){ background:var(--crimson); }
+  .console-head .cdot:nth-child(2){ background:var(--amber); }
+  .console-head .cdot:nth-child(3){ background:var(--teal); }
+  .console-head .clabel{ margin-left:8px; font-size:11.5px; color:var(--text-faint); letter-spacing:.5px; }
+  .console-body{ padding:16px 18px; font-size:13.5px; }
+  .console-body .line{ margin-bottom:6px; white-space:pre-wrap; }
+  .console-body .tag-user{ color:var(--text-faint); }
+  .console-body .tag-out{ color:var(--teal); }
+  .console-body .cursor{ display:inline-block; width:7px; height:14px; background:var(--amber); vertical-align:middle; animation: blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-console .console-body{ min-height:150px; }
+  .hero-typed{ color:var(--text); }
+
+  /* ---------- Cards / grids ---------- */
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+  @media (max-width:700px){ .grid-2{ grid-template-columns:1fr; } }
+  .card{ background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; }
+  .card.crimson{ border-color:#C1395A40; }
+  .card.teal{ border-color:#2FB8A640; }
+  .card .card-label{ font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+  .card.crimson .card-label{ color:var(--crimson); }
+  .card.teal .card-label{ color:var(--teal); }
+  .card p{ font-size:13.5px; margin-bottom:0; color:var(--text-dim); }
+
+  .info-box{
+    display:flex; gap:14px; padding:16px 18px; background:var(--panel); border:1px solid var(--border);
+    border-radius:var(--radius); margin:16px 0; border-left:3px solid var(--amber);
+  }
+  .info-box .icon{ font-size:18px; flex:none; }
+  .info-box p{ margin-bottom:0; font-size:13.5px; }
+
+  /* analogy */
+  .analogy{ background:linear-gradient(135deg, #171C29, #12161F); border:1px dashed #3A4459; border-radius:var(--radius); padding:16px 18px; margin:16px 0; }
+  .analogy .card-label{ color:var(--amber); font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px; }
+  .analogy p{ font-size:13.5px; color:var(--text); margin-bottom:0; font-family:var(--serif); font-size:15.5px; line-height:1.6;}
+
+  /* stamp */
+  .stamp{
+    display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--teal); color:var(--teal);
+    padding:4px 10px; border-radius:5px; font-size:11px; letter-spacing:1px; text-transform:uppercase;
+    transform:rotate(-2deg); font-family:var(--serif);
+  }
+
+  /* misconceptions */
+  .misconception{ display:flex; gap:12px; align-items:flex-start; padding:12px 14px; background:var(--crimson-dim); border-radius:8px; margin-bottom:10px; }
+  .misconception .x{ color:var(--crimson); font-size:15px; flex:none; }
+  .misconception strong{ color:var(--text); }
+  .misconception p{ margin:2px 0 0; font-size:13px; }
+
+  /* takeaways */
+  .takeaways{ background:var(--panel); border:1px solid var(--border); border-left:3px solid var(--teal); border-radius:var(--radius); padding:16px 20px; margin:20px 0; }
+  .takeaways h3{ font-size:14px; color:var(--teal); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; font-family:var(--mono); }
+
+  /* comparison table */
+  table.cmp{ width:100%; border-collapse:collapse; margin:16px 0; font-size:13px; }
+  table.cmp th, table.cmp td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.cmp th{ color:var(--amber); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; }
+  table.cmp td{ color:var(--text-dim); }
+  table.cmp tr:hover td{ color:var(--text); }
+
+  /* diagram wrap */
+  .diagram{ background:var(--panel-3); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin:18px 0; display:flex; justify-content:center; overflow-x:auto; }
+
+  /* exercise */
+  .exercise{ background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin:20px 0; }
+  .exercise .card-label{ color:var(--amber); font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+  .opt-btn{
+    display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--border);
+    color:var(--text); padding:11px 14px; border-radius:8px; margin-bottom:8px; cursor:pointer;
+    font-family:var(--mono); font-size:13px; transition: border-color .15s, background .15s;
+  }
+  .opt-btn:hover{ border-color:var(--teal); }
+  .opt-btn.correct{ border-color:var(--teal); background:var(--teal-dim); color:var(--teal); }
+  .opt-btn.wrong{ border-color:var(--crimson); background:var(--crimson-dim); color:var(--crimson); }
+  .opt-btn:disabled{ cursor:default; }
+  .exercise-feedback{ font-size:13px; margin-top:10px; padding:10px 12px; border-radius:8px; background:var(--panel-3); display:none; }
+  .exercise-feedback.show{ display:block; }
+
+  /* quiz */
+  .quiz-panel{ margin-top:40px; }
+  .quiz-header{ display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .quiz-header h2{ margin:0; border:none; padding:0; }
+  .quiz-progress{ display:flex; gap:6px; margin-bottom:24px; }
+  .quiz-progress .qdot{ width:24px; height:5px; border-radius:3px; background:var(--panel-2); border:1px solid var(--border); }
+  .quiz-progress .qdot.done{ background:var(--teal); border-color:var(--teal); }
+  .quiz-progress .qdot.current{ background:var(--amber); border-color:var(--amber); }
+  .quiz-q{ display:none; }
+  .quiz-q.active{ display:block; animation:fadeIn .3s ease; }
+  .quiz-q .qtext{ font-family:var(--serif); font-size:18px; margin-bottom:16px; color:var(--text); }
+  .quiz-explain{ font-size:13px; padding:12px 14px; border-radius:8px; margin-top:12px; display:none; background:var(--panel-3); border-left:3px solid var(--teal); }
+  .quiz-explain.show{ display:block; }
+  .quiz-explain.wrong-explain{ border-left-color:var(--crimson); }
+  .quiz-nextbtn{ margin-top:16px; }
+  .quiz-summary{ display:none; text-align:center; padding:40px 20px; }
+  .quiz-summary.show{ display:block; }
+  .quiz-summary .score-big{ font-family:var(--serif); font-size:56px; color:var(--amber); margin-bottom:6px; }
+  .quiz-summary .score-msg{ color:var(--text-dim); margin-bottom:26px; }
+
+  /* buttons */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; background:var(--teal); color:#06110F; border:none;
+    padding:11px 20px; border-radius:8px; font-family:var(--mono); font-weight:600; font-size:13.5px;
+    cursor:pointer; transition:transform .15s, box-shadow .15s;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 8px 20px -8px var(--teal); }
+  .btn:disabled{ opacity:.35; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn.ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+  .btn.ghost:hover{ border-color:var(--teal); box-shadow:none; }
+  .btn.amber{ background:var(--amber); color:#241705; }
+
+  /* intro meta grid */
+  .meta-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:24px 0; }
+  @media (max-width:700px){ .meta-grid{ grid-template-columns:1fr 1fr; } }
+  .meta-item{ background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+  .meta-item .m-label{ font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-faint); margin-bottom:6px; }
+  .meta-item .m-value{ font-family:var(--serif); font-size:20px; color:var(--text); }
+
+  /* anatomy svg labels */
+  .anatomy-label{ font-family:var(--mono); font-size:11px; fill:var(--text-dim); }
+  .anatomy-tag{ font-family:var(--mono); font-size:10px; fill:var(--panel); font-weight:700; }
+
+  footer.done-footer{ text-align:center; color:var(--text-faint); font-size:12px; padding:40px 0 10px; }
+
+  /* resource list */
+  .resource-list{ display:grid; gap:10px; margin:14px 0 26px; }
+  .resource-item{ display:flex; gap:12px; padding:12px 14px; background:var(--panel); border:1px solid var(--border); border-radius:8px; align-items:flex-start; }
+  .resource-item .r-icon{ flex:none; font-size:15px; margin-top:1px; }
+  .resource-item .r-title{ color:var(--text); font-size:13.5px; margin-bottom:2px; }
+  .resource-item .r-desc{ color:var(--text-dim); font-size:12.5px; }
+  .kw-chip{ display:inline-block; background:var(--panel-2); border:1px solid var(--border); color:var(--amber); padding:5px 10px; border-radius:14px; font-size:12px; margin:0 6px 8px 0; }
+
+  .cheat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0; }
+  @media (max-width:700px){ .cheat-grid{ grid-template-columns:1fr; } }
+  .cheat-card{ background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+  .cheat-card h4{ font-family:var(--serif); color:var(--amber); font-size:15px; margin-bottom:8px; font-weight:400; }
+  .cheat-card p{ font-size:12.5px; margin-bottom:6px; }
+  .cheat-card code{ font-size:11.5px; background:var(--panel-3); padding:1px 5px; border-radius:4px; color:var(--teal); }
+
+  @media print{
+    nav.sidebar, header.topbar, .exercise, .quiz-panel, .btn{ display:none !important; }
+    .panel{ display:block !important; }
+    body{ background:#fff; color:#000; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <div class="brand">
+      <div class="mark">P</div>
+      <div class="name">Prompt<em>Lab</em></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0% complete</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="xp-badge"><span class="dot"></span><span id="xpValue">0</span>&nbsp;XP</div>
+  </header>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-eyebrow">Start Here</div>
+    <div class="nav-item active" data-target="intro"><span class="idx">◆</span> Introduction</div>
+
+    <div class="nav-eyebrow">Curriculum</div>
+    <div class="nav-item" data-target="module-1"><span class="idx">01</span> Foundations</div>
+    <div class="nav-item locked" data-target="quiz-1"><span class="idx">01Q</span> Quiz — Foundations <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="module-2"><span class="idx">02</span> Few-Shot &amp; Structure <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="quiz-2"><span class="idx">02Q</span> Quiz — Few-Shot <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="module-3"><span class="idx">03</span> Chain-of-Thought <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="quiz-3"><span class="idx">03Q</span> Quiz — CoT <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="module-4"><span class="idx">04</span> Structured Mastery <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="quiz-4"><span class="idx">04Q</span> Quiz — Mastery <span class="lock-icon">🔒</span></div>
+
+    <div class="nav-eyebrow">Wrap-Up</div>
+    <div class="nav-item locked" data-target="final"><span class="idx">◈</span> Final Challenge <span class="lock-icon">🔒</span></div>
+    <div class="nav-item locked" data-target="continue"><span class="idx">◇</span> Continue Learning <span class="lock-icon">🔒</span></div>
+  </nav>
+
+  <main class="content">
+
+    <!-- ============ INTRO ============ -->
+    <section class="panel active" id="intro">
+      <div class="eyebrow">Interactive Learning Studio</div>
+      <h1 class="page-title">Core Prompt Engineering <em>Techniques</em></h1>
+      <p class="lead">A hands-on lab covering the four techniques that underlie almost every well-written prompt: zero-shot instruction, few-shot demonstration, chain-of-thought reasoning, and fully structured prompt design. By the end, you'll be able to look at any weak prompt and know exactly what to add to make it work.</p>
+
+      <div class="console hero-console">
+        <div class="console-head"><span class="cdot"></span><span class="cdot"></span><span class="cdot"></span><span class="clabel">prompt.transform()</span></div>
+        <div class="console-body">
+          <div class="line tag-user">&gt; "write about our new app"</div>
+          <div class="line tag-out" id="heroTyped"></div>
+        </div>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item"><div class="m-label">Est. Time</div><div class="m-value">70–90 min</div></div>
+        <div class="meta-item"><div class="m-label">Modules</div><div class="m-value">4 stages</div></div>
+        <div class="meta-item"><div class="m-label">Prerequisites</div><div class="m-value">None</div></div>
+        <div class="meta-item"><div class="m-label">Format</div><div class="m-value">Self-paced</div></div>
+      </div>
+
+      <h2 class="section-title">Learning Objectives</h2>
+      <ul class="bullets">
+        <li>Explain the anatomy of a well-formed prompt and why each part exists.</li>
+        <li>Write effective zero-shot prompts using role, context and output constraints.</li>
+        <li>Design few-shot example sets that reliably steer format and style.</li>
+        <li>Apply chain-of-thought prompting to multi-step reasoning tasks, and recognize when it isn't needed.</li>
+        <li>Combine all four techniques into a single structured, reusable prompt template.</li>
+      </ul>
+
+      <h2 class="section-title">Expected Outcomes</h2>
+      <p>You'll finish with a personal cheat sheet, a completed final challenge showing a vague prompt rebuilt from scratch, and a working mental model for diagnosing why a prompt underperforms.</p>
+
+      <h2 class="section-title">Reward System</h2>
+      <div class="grid-2">
+        <div class="card teal">
+          <div class="card-label">XP Points</div>
+          <p>Earn 25 XP per correct quiz answer and 50 XP for completing each module's practical exercise. Your total is tracked live in the header.</p>
+        </div>
+        <div class="card crimson">
+          <div class="card-label">Stage Badges</div>
+          <p>Clearing each quiz unlocks the next module and a stamp badge. Collect all four, plus the Final Challenge stamp, to complete the lab.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:36px;">
+        <button class="btn" onclick="goTo('module-1')">Begin Stage 01 →</button>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 1 ============ -->
+    <section class="panel" id="module-1">
+      <div class="eyebrow">Stage 01 · Foundational</div>
+      <h1 class="page-title">Foundations &amp; <em>Zero-Shot</em> Prompting</h1>
+      <p class="lead">Every technique you'll learn later is just an addition on top of this stage. Get the anatomy right first, and everything else is a variation on a theme.</p>
+
+      <h2 class="section-title">The Anatomy of a Prompt</h2>
+      <p>A prompt is not just "what you type" — it's a small, structured brief. Most effective prompts contain some combination of five parts: a <strong>persona/role</strong>, the <strong>task or instruction</strong>, supporting <strong>context</strong>, the actual <strong>input data</strong>, and the desired <strong>output format</strong>. Leaving any of these implicit forces the model to guess.</p>
+
+      <div class="diagram">
+        <svg viewBox="0 0 620 230" width="100%" style="max-width:620px" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="600" height="34" rx="6" fill="#1A2130" stroke="#2FB8A6" stroke-width="1.2"/>
+          <text x="20" y="31" class="anatomy-label" fill="#2FB8A6">Persona — "You are a senior technical writer."</text>
+          <rect x="10" y="52" width="600" height="34" rx="6" fill="#1A2130" stroke="#E8A33D" stroke-width="1.2"/>
+          <text x="20" y="73" class="anatomy-label" fill="#E8A33D">Task — "Summarize the release notes below."</text>
+          <rect x="10" y="94" width="600" height="34" rx="6" fill="#1A2130" stroke="#8B93A6" stroke-width="1.2"/>
+          <text x="20" y="115" class="anatomy-label" fill="#8B93A6">Context — "Audience: non-technical customers."</text>
+          <rect x="10" y="136" width="600" height="34" rx="6" fill="#1A2130" stroke="#C1395A" stroke-width="1.2"/>
+          <text x="20" y="157" class="anatomy-label" fill="#C1395A">Input Data — [release notes text]</text>
+          <rect x="10" y="178" width="600" height="34" rx="6" fill="#1A2130" stroke="#E9E4D8" stroke-width="1.2"/>
+          <text x="20" y="199" class="anatomy-label" fill="#E9E4D8">Output Format — "3 bullet points, plain English."</text>
+        </svg>
+      </div>
+
+      <h3 class="sub-title">Zero-Shot Prompting</h3>
+      <p><strong>Zero-shot prompting</strong> means asking the model to complete a task with no worked examples — you rely entirely on its pretrained knowledge plus the clarity of your instruction. It's the default mode for most everyday requests, and it works well precisely when the anatomy above is filled in.</p>
+
+      <div class="analogy">
+        <div class="card-label">Analogy</div>
+        <p>Zero-shot prompting is like walking up to a chef and saying "surprise me" versus saying "a light seafood dish, no dairy, ready in 20 minutes." Both are zero-shot — no example dish was shown — but only one gives the chef enough to work with.</p>
+      </div>
+
+      <h3 class="sub-title">Role Prompting</h3>
+      <p>Assigning a persona ("You are a senior data analyst…") is a lightweight way to prime tone, vocabulary and depth without writing a longer instruction. It doesn't grant new abilities, but it narrows the space of plausible responses.</p>
+
+      <h2 class="section-title">Comparing Vague vs. Engineered Prompts</h2>
+      <table class="cmp">
+        <tr><th>Vague Prompt</th><th>Engineered Zero-Shot Prompt</th></tr>
+        <tr><td>"Write about our new app."</td><td>"You are a product marketing writer. In 3 short paragraphs, introduce our new budgeting app to first-time users. Emphasize ease of use. Avoid jargon."</td></tr>
+        <tr><td>"Fix this code."</td><td>"You are a senior Python reviewer. Find and fix any bugs in the function below. Return only the corrected code in a code block, followed by a one-line explanation of each fix."</td></tr>
+        <tr><td>"Is this email good?"</td><td>"Review the email below for tone and clarity, assuming the recipient is a busy executive. List up to 3 specific improvements as bullet points."</td></tr>
+      </table>
+
+      <div class="exercise" id="ex1">
+        <div class="card-label">Practical Exercise — Spot the Better Zero-Shot Prompt</div>
+        <p style="margin-bottom:12px; color:var(--text);">Task: get consistent, well-formatted release notes from a raw changelog. Which prompt is best engineered?</p>
+        <button class="opt-btn" data-correct="false">"Turn this into release notes."</button>
+        <button class="opt-btn" data-correct="false">"Make this changelog sound professional and nice please, thanks so much!"</button>
+        <button class="opt-btn" data-correct="true">"You are a release manager. Convert the raw changelog below into customer-facing release notes: 3 sections (New, Improved, Fixed), each with short bullet points in plain English."</button>
+        <div class="exercise-feedback" id="ex1fb"></div>
+      </div>
+
+      <h2 class="section-title">Common Misconceptions</h2>
+      <div class="misconception"><span class="x">✕</span><div><strong>"More words always make a better prompt."</strong><p>Length without structure just adds noise. A short, well-anatomized prompt outperforms a long, unstructured one.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"The model will always infer what I meant."</strong><p>It infers the most statistically likely interpretation — which often isn't your intended one. State it.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"Being polite or rude changes the model's ability."</strong><p>Politeness doesn't unlock capability; specificity does. Courtesy is optional, clarity is not.</p></div></div>
+
+      <div class="takeaways">
+        <h3>Key Takeaways</h3>
+        <ul class="bullets">
+          <li>A prompt is a brief: persona, task, context, input, and output format.</li>
+          <li>Zero-shot relies on clarity alone — no examples are given.</li>
+          <li>Role prompting narrows tone and scope, it doesn't add new knowledge.</li>
+        </ul>
+      </div>
+
+      <div style="text-align:center; margin-top:30px;">
+        <button class="btn" onclick="unlockAndGo('quiz-1')">Take the Stage 01 Quiz →</button>
+      </div>
+    </section>
+
+    <!-- ============ QUIZ 1 ============ -->
+    <section class="panel" id="quiz-1"></section>
+
+    <!-- ============ MODULE 2 ============ -->
+    <section class="panel" id="module-2">
+      <div class="eyebrow">Stage 02 · Building</div>
+      <h1 class="page-title">Few-Shot Prompting &amp; <em>Output Structuring</em></h1>
+      <p class="lead">Zero-shot tells the model what to do. Few-shot shows it — and showing is often far more reliable for matching a precise format or style.</p>
+
+      <h2 class="section-title">What Few-Shot Prompting Is</h2>
+      <p><strong>Few-shot prompting</strong> means including one or more worked examples ("shots") in the prompt before the real input. The model completes the pattern it sees, a capability often called <em>in-context learning</em> — it isn't retraining, it's pattern-matching within the conversation.</p>
+
+      <div class="analogy">
+        <div class="card-label">Analogy</div>
+        <p>Few-shot prompting is like onboarding a new hire by walking through two solved tickets before handing them a similar one — versus just saying "handle tickets like these" with no examples at all.</p>
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 620 260" width="100%" style="max-width:620px" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="600" height="50" rx="6" fill="#1A2130" stroke="#2FB8A6" stroke-width="1.2"/>
+          <text x="20" y="30" class="anatomy-label" fill="#2FB8A6">Example 1 — Input: "Great battery life!" → Output: Positive</text>
+          <text x="20" y="48" class="anatomy-label" fill="#565F75">(shows the exact input/output pattern)</text>
+          <rect x="10" y="68" width="600" height="34" rx="6" fill="#1A2130" stroke="#2FB8A6" stroke-width="1.2"/>
+          <text x="20" y="89" class="anatomy-label" fill="#2FB8A6">Example 2 — Input: "Screen cracked in a day." → Output: Negative</text>
+          <rect x="10" y="110" width="600" height="34" rx="6" fill="#1A2130" stroke="#2FB8A6" stroke-width="1.2"/>
+          <text x="20" y="131" class="anatomy-label" fill="#2FB8A6">Example 3 — Input: "It's fine, does the job." → Output: Neutral</text>
+          <rect x="10" y="152" width="600" height="34" rx="6" fill="#1A2130" stroke="#E8A33D" stroke-width="1.2"/>
+          <text x="20" y="173" class="anatomy-label" fill="#E8A33D">New Input — "Shipping took 3 weeks, product is okay." → Output: ?</text>
+          <rect x="10" y="194" width="600" height="34" rx="6" fill="#1A2130" stroke="#C1395A" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <text x="20" y="215" class="anatomy-label" fill="#C1395A">Model completes the pattern → Negative (or Neutral)</text>
+        </svg>
+      </div>
+
+      <h3 class="sub-title">Controlling Output Format</h3>
+      <p>Delimiters (<code>###</code>, triple backticks, XML-style tags) and explicit schemas ("return JSON with keys: title, summary, tags") remove ambiguity about where input ends and output begins, and how the response should be shaped for downstream parsing.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-label" style="color:var(--text-dim)">Without Delimiters</div>
+          <p>Summarize this: Q3 revenue grew 12%, driven by...</p>
+        </div>
+        <div class="card teal">
+          <div class="card-label">With Delimiters &amp; Schema</div>
+          <p>Summarize the text between &lt;doc&gt;&lt;/doc&gt; tags. Return JSON: {"summary": string, "keyMetric": string}.</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">Zero-Shot vs. One-Shot vs. Few-Shot</h2>
+      <table class="cmp">
+        <tr><th>Approach</th><th>Best For</th><th>Trade-off</th></tr>
+        <tr><td>Zero-shot</td><td>Simple, well-known tasks</td><td>Lowest token cost, least format control</td></tr>
+        <tr><td>One-shot</td><td>Establishing a single format quickly</td><td>Risk of over-fitting to that one example's quirks</td></tr>
+        <tr><td>Few-shot (3–5)</td><td>Precise style/format matching, edge cases</td><td>Higher token cost; example order/bias matters</td></tr>
+      </table>
+
+      <div class="exercise" id="ex2">
+        <div class="card-label">Practical Exercise — Well-Formed Few-Shot Block</div>
+        <p style="margin-bottom:12px; color:var(--text);">Which set of examples is best formatted for reliable in-context learning?</p>
+        <button class="opt-btn" data-correct="false">Three examples, each in a different format, with no clear input/output separator.</button>
+        <button class="opt-btn" data-correct="true">Three examples, each using the same "Input: … / Output: …" structure and covering different edge cases.</button>
+        <button class="opt-btn" data-correct="false">Ten examples, all nearly identical in wording, all positive-sentiment.</button>
+        <div class="exercise-feedback" id="ex2fb"></div>
+      </div>
+
+      <h2 class="section-title">Common Misconceptions</h2>
+      <div class="misconception"><span class="x">✕</span><div><strong>"More examples are always better."</strong><p>Past 3–5 diverse examples, returns diminish and token cost rises; redundant examples can even bias the output.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"Few-shot prompting fixes factual errors."</strong><p>It steers format and style, not the model's underlying factual knowledge.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"Example order doesn't matter."</strong><p>Models can be sensitive to ordering and recency — the last example often has outsized influence.</p></div></div>
+
+      <div class="takeaways">
+        <h3>Key Takeaways</h3>
+        <ul class="bullets">
+          <li>Few-shot prompting leverages in-context pattern completion, not retraining.</li>
+          <li>Keep examples consistent in structure and diverse in coverage.</li>
+          <li>Delimiters and schemas make output format reliably parseable.</li>
+        </ul>
+      </div>
+
+      <div style="text-align:center; margin-top:30px;">
+        <button class="btn" onclick="unlockAndGo('quiz-2')">Take the Stage 02 Quiz →</button>
+      </div>
+    </section>
+
+    <section class="panel" id="quiz-2"></section>
+
+    <!-- ============ MODULE 3 ============ -->
+    <section class="panel" id="module-3">
+      <div class="eyebrow">Stage 03 · Advancing</div>
+      <h1 class="page-title">Chain-of-Thought <em>Reasoning</em></h1>
+      <p class="lead">Some tasks need the model to reason through intermediate steps rather than jump straight to an answer. Chain-of-thought (CoT) prompting asks for — and benefits from — showing that work.</p>
+
+      <h2 class="section-title">What Chain-of-Thought Is</h2>
+      <p><strong>Chain-of-thought prompting</strong> instructs the model to lay out intermediate reasoning steps before giving a final answer, instead of producing the answer directly. The simplest version — zero-shot CoT — is just appending a trigger phrase like "Let's think step by step." Few-shot CoT goes further, showing worked examples that include the reasoning chain, not just the final answer.</p>
+
+      <div class="analogy">
+        <div class="card-label">Analogy</div>
+        <p>Chain-of-thought is showing your work on a math exam. A wrong final answer with visible steps is easier to debug — for you and, in a real sense, for the model — than a wrong answer that appeared out of nowhere.</p>
+      </div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 620 200" width="100%" style="max-width:620px" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="24" class="anatomy-label" fill="#8B93A6">Direct prompting</text>
+          <rect x="10" y="34" width="150" height="30" rx="6" fill="#1A2130" stroke="#C1395A"/>
+          <text x="24" y="54" class="anatomy-label" fill="#C1395A">Question</text>
+          <text x="172" y="54" class="anatomy-label" fill="#565F75">→</text>
+          <rect x="190" y="34" width="150" height="30" rx="6" fill="#1A2130" stroke="#C1395A" stroke-dasharray="3 3"/>
+          <text x="204" y="54" class="anatomy-label" fill="#C1395A">Answer (guessed)</text>
+
+          <text x="10" y="100" class="anatomy-label" fill="#8B93A6">Chain-of-thought prompting</text>
+          <rect x="10" y="110" width="110" height="30" rx="6" fill="#1A2130" stroke="#2FB8A6"/>
+          <text x="22" y="130" class="anatomy-label" fill="#2FB8A6">Question</text>
+          <text x="122" y="130" class="anatomy-label" fill="#565F75">→</text>
+          <rect x="136" y="110" width="110" height="30" rx="6" fill="#1A2130" stroke="#E8A33D"/>
+          <text x="146" y="130" class="anatomy-label" fill="#E8A33D">Step 1</text>
+          <text x="248" y="130" class="anatomy-label" fill="#565F75">→</text>
+          <rect x="262" y="110" width="110" height="30" rx="6" fill="#1A2130" stroke="#E8A33D"/>
+          <text x="272" y="130" class="anatomy-label" fill="#E8A33D">Step 2</text>
+          <text x="374" y="130" class="anatomy-label" fill="#565F75">→</text>
+          <rect x="388" y="110" width="150" height="30" rx="6" fill="#1A2130" stroke="#2FB8A6"/>
+          <text x="400" y="130" class="anatomy-label" fill="#2FB8A6">Answer (grounded)</text>
+        </svg>
+      </div>
+
+      <h3 class="sub-title">Self-Consistency</h3>
+      <p>A more advanced variant: generate several independent reasoning chains for the same question (by sampling more than once) and take the majority-vote answer. This reduces the impact of any single faulty chain, at the cost of multiple generations.</p>
+
+      <h2 class="section-title">When to Use CoT — and When Not To</h2>
+      <table class="cmp">
+        <tr><th>Good Fit</th><th>Poor Fit</th></tr>
+        <tr><td>Multi-step arithmetic or logic puzzles</td><td>Simple factual lookups ("capital of France")</td></tr>
+        <tr><td>Planning tasks with dependent sub-steps</td><td>Single-label classification with clear signal</td></tr>
+        <tr><td>Debugging code with multiple possible causes</td><td>Latency- or cost-sensitive, high-volume calls</td></tr>
+      </table>
+
+      <div class="info-box">
+        <div class="icon">⚠</div>
+        <p><strong>Faithfulness caveat:</strong> a visible reasoning chain is not proof the model actually "computed" the answer that way internally — it can look plausible and still be wrong. Treat CoT output as inspectable, not infallible.</p>
+      </div>
+
+      <div class="exercise" id="ex3">
+        <div class="card-label">Practical Exercise — Add Chain-of-Thought</div>
+        <p style="margin-bottom:12px; color:var(--text);">Original prompt: "A store had 84 items, sold 27 on Monday and 19 on Tuesday, then restocked 15. How many items are left?" Which rewrite best applies CoT?</p>
+        <button class="opt-btn" data-correct="false">"Just give me the final number, nothing else."</button>
+        <button class="opt-btn" data-correct="true">"Work through this step by step: track the item count after each event, then state the final total on its own line."</button>
+        <button class="opt-btn" data-correct="false">"You are a store manager. Answer confidently."</button>
+        <div class="exercise-feedback" id="ex3fb"></div>
+      </div>
+
+      <h2 class="section-title">Common Misconceptions</h2>
+      <div class="misconception"><span class="x">✕</span><div><strong>"CoT guarantees a correct answer."</strong><p>It improves odds on reasoning-heavy tasks; it doesn't guarantee correctness.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"CoT always helps."</strong><p>On simple tasks it can add latency and cost with no accuracy gain, sometimes even introducing errors.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"The visible steps are exactly how the model 'thinks.'"</strong><p>The chain is a generated explanation, useful for inspection, not a literal trace of internal computation.</p></div></div>
+
+      <div class="takeaways">
+        <h3>Key Takeaways</h3>
+        <ul class="bullets">
+          <li>CoT prompts for intermediate reasoning steps before the final answer.</li>
+          <li>Best suited to multi-step reasoning; wasteful on simple lookups.</li>
+          <li>Self-consistency samples multiple chains and takes a majority vote.</li>
+        </ul>
+      </div>
+
+      <div style="text-align:center; margin-top:30px;">
+        <button class="btn" onclick="unlockAndGo('quiz-3')">Take the Stage 03 Quiz →</button>
+      </div>
+    </section>
+
+    <section class="panel" id="quiz-3"></section>
+
+    <!-- ============ MODULE 4 ============ -->
+    <section class="panel" id="module-4">
+      <div class="eyebrow">Stage 04 · Mastery</div>
+      <h1 class="page-title">Structured Prompts &amp; <em>Combining Techniques</em></h1>
+      <p class="lead">Real-world prompts rarely use one technique in isolation. Mastery is knowing how to layer role, context, examples, reasoning instructions and output constraints into one reusable template.</p>
+
+      <h2 class="section-title">System vs. User Roles</h2>
+      <p>In chat-style APIs, a <strong>system message</strong> sets persistent, background behavior (persona, rules, output constraints) that holds across the conversation, while <strong>user messages</strong> carry the specific request. Separating these keeps your core instructions stable even as inputs change.</p>
+
+      <h2 class="section-title">The Prompt Stack</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 600 240" width="100%" style="max-width:600px" xmlns="http://www.w3.org/2000/svg">
+          <rect x="60" y="10" width="480" height="38" rx="6" fill="#1A2130" stroke="#2FB8A6"/>
+          <text x="80" y="34" class="anatomy-label" fill="#2FB8A6">Persona / System Layer</text>
+          <rect x="60" y="56" width="480" height="38" rx="6" fill="#1A2130" stroke="#E8A33D"/>
+          <text x="80" y="80" class="anatomy-label" fill="#E8A33D">Context &amp; Constraints Layer</text>
+          <rect x="60" y="102" width="480" height="38" rx="6" fill="#1A2130" stroke="#8B93A6"/>
+          <text x="80" y="126" class="anatomy-label" fill="#8B93A6">Few-Shot Examples Layer (optional)</text>
+          <rect x="60" y="148" width="480" height="38" rx="6" fill="#1A2130" stroke="#C1395A"/>
+          <text x="80" y="172" class="anatomy-label" fill="#C1395A">Reasoning Instruction Layer (CoT, optional)</text>
+          <rect x="60" y="194" width="480" height="38" rx="6" fill="#1A2130" stroke="#E9E4D8"/>
+          <text x="80" y="218" class="anatomy-label" fill="#E9E4D8">Output Format Layer</text>
+        </svg>
+      </div>
+
+      <h3 class="sub-title">Prompt Templates</h3>
+      <p>A <strong>prompt template</strong> is a reusable skeleton with placeholders (e.g. <code>{{customer_name}}</code>, <code>{{document}}</code>) so the same engineered structure can be reused across many inputs without rebuilding it each time — the core pattern behind most production AI features.</p>
+
+      <div class="console">
+        <div class="console-head"><span class="cdot"></span><span class="cdot"></span><span class="cdot"></span><span class="clabel">template.txt</span></div>
+        <div class="console-body">
+          <div class="line">System: You are a {{role}}. Follow these constraints: {{constraints}}.</div>
+          <div class="line">Examples: {{few_shot_examples}}</div>
+          <div class="line">Instruction: Think step by step, then answer.</div>
+          <div class="line">Input: {{user_input}}</div>
+          <div class="line">Output format: {{schema}}</div>
+        </div>
+      </div>
+
+      <h3 class="sub-title">Guardrails &amp; Untrusted Input</h3>
+      <p>When user-supplied text is inserted into a prompt, clearly delimiting it (tags, fenced blocks) and instructing the model to treat that region as data-only — not as new instructions — reduces the risk of the content hijacking the prompt's intent.</p>
+
+      <h3 class="sub-title">Iterative Refinement Workflow</h3>
+      <p>Production-grade prompting is a loop, not a one-shot write: <strong>draft → test on real inputs → diagnose the failure mode → patch the specific layer responsible → retest.</strong> Most failures trace back to exactly one layer of the stack above, which is why keeping the layers distinct matters.</p>
+
+      <div class="exercise" id="ex4">
+        <div class="card-label">Practical Exercise — Assemble the Right Layer</div>
+        <p style="margin-bottom:12px; color:var(--text);">Your structured prompt reliably gets the right facts but keeps returning a paragraph instead of the required JSON. Which layer needs fixing?</p>
+        <button class="opt-btn" data-correct="false">Persona / System layer</button>
+        <button class="opt-btn" data-correct="false">Few-shot examples layer</button>
+        <button class="opt-btn" data-correct="true">Output format layer</button>
+        <div class="exercise-feedback" id="ex4fb"></div>
+      </div>
+
+      <h2 class="section-title">Common Misconceptions</h2>
+      <div class="misconception"><span class="x">✕</span><div><strong>"One perfect prompt works for every model."</strong><p>Models differ in training and tuning; a structure that works on one may need adjustment on another.</p></div></div>
+      <div class="misconception"><span class="x">✕</span><div><strong>"A structured prompt never needs testing again."</strong><p>Inputs drift and edge cases appear; treat prompts as living artifacts, not one-time writes.</p></div></div>
+
+      <div class="takeaways">
+        <h3>Key Takeaways</h3>
+        <ul class="bullets">
+          <li>System messages set persistent behavior; user messages carry the request.</li>
+          <li>A prompt stack layers persona, context, examples, reasoning and format.</li>
+          <li>Templates make structure reusable; refinement is a diagnostic loop, not a one-off.</li>
+        </ul>
+      </div>
+
+      <div style="text-align:center; margin-top:30px;">
+        <button class="btn" onclick="unlockAndGo('quiz-4')">Take the Stage 04 Quiz →</button>
+      </div>
+    </section>
+
+    <section class="panel" id="quiz-4"></section>
+
+    <!-- ============ FINAL CHALLENGE ============ -->
+    <section class="panel" id="final">
+      <div class="eyebrow">Final Stage</div>
+      <h1 class="page-title">Final Practical <em>Challenge</em></h1>
+      <p class="lead">Rebuild one vague prompt into a fully structured one, choosing the right layer at each step.</p>
+
+      <div class="console">
+        <div class="console-head"><span class="cdot"></span><span class="cdot"></span><span class="cdot"></span><span class="clabel">challenge.brief</span></div>
+        <div class="console-body">
+          <div class="line tag-user">Original prompt: "Help customers understand our refund policy."</div>
+        </div>
+      </div>
+
+      <div class="exercise" id="exFinal1">
+        <div class="card-label">Step 1 — Choose the Persona Layer</div>
+        <button class="opt-btn" data-correct="false">"You are an AI."</button>
+        <button class="opt-btn" data-correct="true">"You are a friendly customer support agent for an online retailer."</button>
+        <button class="opt-btn" data-correct="false">(leave it out entirely)</button>
+        <div class="exercise-feedback" id="exFinal1fb"></div>
+      </div>
+
+      <div class="exercise" id="exFinal2">
+        <div class="card-label">Step 2 — Choose the Context/Constraints Layer</div>
+        <button class="opt-btn" data-correct="false">"Be helpful."</button>
+        <button class="opt-btn" data-correct="true">"Refunds are accepted within 30 days with a receipt; digital goods are non-refundable. Never promise exceptions."</button>
+        <button class="opt-btn" data-correct="false">"Refunds are complicated, use your best judgment."</button>
+        <div class="exercise-feedback" id="exFinal2fb"></div>
+      </div>
+
+      <div class="exercise" id="exFinal3">
+        <div class="card-label">Step 3 — Choose the Output Format Layer</div>
+        <button class="opt-btn" data-correct="false">"Say whatever feels right."</button>
+        <button class="opt-btn" data-correct="true">"Respond in 2–4 sentences, plain English, ending with an offer to escalate to a human if unresolved."</button>
+        <button class="opt-btn" data-correct="false">"Respond only in legal terminology."</button>
+        <div class="exercise-feedback" id="exFinal3fb"></div>
+      </div>
+
+      <div id="finalStamp" style="text-align:center; margin:36px 0; display:none;">
+        <span class="stamp">✓ Lab Completed</span>
+      </div>
+
+      <h2 class="section-title">Cheat Sheet</h2>
+      <div class="cheat-grid">
+        <div class="cheat-card"><h4>Zero-Shot</h4><p>Persona + task + context + output format, no examples.</p><p><code>You are a {{role}}. {{task}}. Format: {{format}}.</code></p></div>
+        <div class="cheat-card"><h4>Few-Shot</h4><p>2–5 consistent input/output examples, then the real input.</p><p><code>Input: … → Output: …</code> ×N, then new input.</p></div>
+        <div class="cheat-card"><h4>Chain-of-Thought</h4><p>Ask for steps before the final answer; best for reasoning tasks.</p><p><code>Think step by step, then answer.</code></p></div>
+        <div class="cheat-card"><h4>Structured Stack</h4><p>Persona → Context → Examples → Reasoning → Format, as separate layers.</p></div>
+      </div>
+
+      <h2 class="section-title">Summary Notes</h2>
+      <p>Every effective prompt is built from the same five ingredients — persona, task, context, examples, and output format — combined in different proportions depending on task difficulty. Zero-shot suffices for familiar, simple tasks. Few-shot earns its token cost when format or style must match exactly. Chain-of-thought is worth the extra length only for genuinely multi-step reasoning. Mastery is knowing which single layer to touch when a prompt misbehaves, rather than rewriting the whole thing.</p>
+
+      <div style="text-align:center; margin-top:10px; margin-bottom:10px;">
+        <button class="btn ghost" onclick="window.print()">🖨 Print / Save Notes</button>
+      </div>
+
+      <div style="text-align:center; margin-top:20px;">
+        <button class="btn" onclick="goTo('continue')">Continue Learning →</button>
+      </div>
+    </section>
+
+    <!-- ============ CONTINUE LEARNING ============ -->
+    <section class="panel" id="continue">
+      <div class="eyebrow">Beyond This Lab</div>
+      <h1 class="page-title">Continue <em>Learning</em></h1>
+
+      <h2 class="section-title">Books</h2>
+      <div class="resource-list">
+        <div class="resource-item"><span class="r-icon">📘</span><div><div class="r-title">Prompt Engineering for Generative AI — James Phoenix &amp; Mike Taylor</div><div class="r-desc">Practical, model-agnostic techniques with worked examples.</div></div></div>
+        <div class="resource-item"><span class="r-icon">📘</span><div><div class="r-title">Co-Intelligence — Ethan Mollick</div><div class="r-desc">Broader framing of working effectively alongside LLMs.</div></div></div>
+      </div>
+
+      <h2 class="section-title">Documentation</h2>
+      <div class="resource-list">
+        <div class="resource-item"><span class="r-icon">📄</span><div><div class="r-title">Anthropic — Prompt Engineering Overview (docs.claude.com)</div><div class="r-desc">Official guidance covering role prompts, examples, and chain-of-thought for Claude models.</div></div></div>
+        <div class="resource-item"><span class="r-icon">📄</span><div><div class="r-title">OpenAI Prompt Engineering Guide</div><div class="r-desc">Complementary tactics, useful for comparing model-specific behavior.</div></div></div>
+      </div>
+
+      <h2 class="section-title">Research Papers</h2>
+      <div class="resource-list">
+        <div class="resource-item"><span class="r-icon">🧪</span><div><div class="r-title">Wei et al., 2022 — "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"</div><div class="r-desc">The original CoT paper; establishes when step-by-step prompting helps.</div></div></div>
+        <div class="resource-item"><span class="r-icon">🧪</span><div><div class="r-title">Brown et al., 2020 — "Language Models are Few-Shot Learners" (GPT-3)</div><div class="r-desc">Foundational paper on in-context, few-shot learning.</div></div></div>
+        <div class="resource-item"><span class="r-icon">🧪</span><div><div class="r-title">Wang et al., 2022 — "Self-Consistency Improves Chain of Thought Reasoning"</div><div class="r-desc">Introduces the majority-vote sampling technique covered in Stage 03.</div></div></div>
+      </div>
+
+      <h2 class="section-title">Communities</h2>
+      <div class="resource-list">
+        <div class="resource-item"><span class="r-icon">💬</span><div><div class="r-title">r/PromptEngineering</div><div class="r-desc">Active discussion of techniques and failure cases across models.</div></div></div>
+        <div class="resource-item"><span class="r-icon">💬</span><div><div class="r-title">Learn Prompting Discord</div><div class="r-desc">Community tied to the Learn Prompting course, good for Q&amp;A.</div></div></div>
+      </div>
+
+      <h2 class="section-title">Practice Platforms</h2>
+      <div class="resource-list">
+        <div class="resource-item"><span class="r-icon">🛠</span><div><div class="r-title">learnprompting.org</div><div class="r-desc">Structured, free course with exercises beyond this lab's scope.</div></div></div>
+        <div class="resource-item"><span class="r-icon">🛠</span><div><div class="r-title">Anthropic Console — Prompt Workbench</div><div class="r-desc">Test structured prompts directly against Claude models with live output.</div></div></div>
+      </div>
+
+      <h2 class="section-title">Search Keywords</h2>
+      <div>
+        <span class="kw-chip">in-context learning</span>
+        <span class="kw-chip">prompt injection defenses</span>
+        <span class="kw-chip">self-consistency decoding</span>
+        <span class="kw-chip">system prompt design</span>
+        <span class="kw-chip">structured output / JSON mode</span>
+        <span class="kw-chip">retrieval-augmented prompting</span>
+      </div>
+
+      <h2 class="section-title">AI Prompts For Further Learning</h2>
+      <div class="resource-list">
+        <div class="resource-item"><span class="r-icon">🤖</span><div><div class="r-title">"Take this vague prompt of mine and rewrite it using the persona/context/examples/format stack, explaining each change."</div></div></div>
+        <div class="resource-item"><span class="r-icon">🤖</span><div><div class="r-title">"Generate 3 few-shot examples for [task], then show me a 4th input and predict what pattern I'd expect."</div></div></div>
+        <div class="resource-item"><span class="r-icon">🤖</span><div><div class="r-title">"Give me a reasoning task where chain-of-thought prompting would NOT help, and explain why."</div></div></div>
+      </div>
+
+      <footer class="done-footer">Prompt Engineering Lab — Interactive Learning Studio · Built for offline, self-contained use.</footer>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---------------- State (in-memory only, no browser storage) ----------------
+  const state = {
+    xp: 0,
+    unlocked: { 'intro':true, 'module-1':true, 'quiz-1':false, 'module-2':false, 'quiz-2':false,
+                'module-3':false, 'quiz-3':false, 'module-4':false, 'quiz-4':false,
+                'final':false, 'continue':false },
+    completedQuizzes: {}
+  };
+  const sectionOrder = ['intro','module-1','quiz-1','module-2','quiz-2','module-3','quiz-3','module-4','quiz-4','final','continue'];
+
+  const navItems = document.querySelectorAll('.nav-item');
+  const panels = document.querySelectorAll('.panel');
+  const progressFill = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const xpValue = document.getElementById('xpValue');
+
+  function addXP(n){
+    state.xp += n;
+    xpValue.textContent = state.xp;
+  }
+
+  function updateProgress(){
+    const total = sectionOrder.length;
+    const unlockedCount = sectionOrder.filter(s => state.unlocked[s]).length;
+    const pct = Math.round((unlockedCount/total)*100);
+    progressFill.style.width = pct + '%';
+    progressLabel.textContent = pct + '% complete';
+  }
+
+  function refreshNav(){
+    navItems.forEach(item=>{
+      const target = item.getAttribute('data-target');
+      const isUnlocked = state.unlocked[target];
+      item.classList.toggle('locked', !isUnlocked);
+      const lockIcon = item.querySelector('.lock-icon');
+      if(lockIcon){ lockIcon.style.display = isUnlocked ? 'none' : 'inline'; }
+      if(isUnlocked && state.completedQuizzes[target] && !item.querySelector('.check')){
+        const c = document.createElement('span');
+        c.className='check'; c.textContent='✓';
+        item.appendChild(c);
+      }
+    });
+  }
+
+  function goTo(target){
+    if(!state.unlocked[target]) return;
+    panels.forEach(p=>p.classList.toggle('active', p.id===target));
+    navItems.forEach(n=>n.classList.toggle('active', n.getAttribute('data-target')===target));
+    document.getElementById('sidebar').classList.remove('open');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  window.goTo = goTo;
+
+  function unlockAndGo(target){
+    unlock(target);
+    goTo(target);
+  }
+  window.unlockAndGo = unlockAndGo;
+
+  navItems.forEach(item=>{
+    item.addEventListener('click', ()=> goTo(item.getAttribute('data-target')));
+  });
+
+  document.getElementById('menuToggle').addEventListener('click', ()=>{
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+
+  function unlock(target){
+    state.unlocked[target] = true;
+    refreshNav();
+    updateProgress();
+  }
+
+  // ---------------- Hero typing animation ----------------
+  const heroText = "→ \"You are a product marketing writer. In 3 short paragraphs, introduce our new budgeting app to first-time users. Emphasize ease of use. Avoid jargon.\"";
+  const heroEl = document.getElementById('heroTyped');
+  let heroI = 0;
+  function typeHero(){
+    if(heroI <= heroText.length){
+      heroEl.innerHTML = heroText.slice(0, heroI) + '<span class="cursor"></span>';
+      heroI++;
+      setTimeout(typeHero, 14);
+    }
+  }
+  typeHero();
+
+  // ---------------- Practical exercises (single-question, immediate feedback) ----------------
+  function wireExercise(exId, fbId){
+    const ex = document.getElementById(exId);
+    if(!ex) return;
+    const fb = document.getElementById(fbId);
+    const btns = ex.querySelectorAll('.opt-btn');
+    btns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        btns.forEach(b=>b.disabled=true);
+        const correct = btn.getAttribute('data-correct') === 'true';
+        btn.classList.add(correct ? 'correct' : 'wrong');
+        btns.forEach(b=>{
+          if(b.getAttribute('data-correct')==='true') b.classList.add('correct');
+        });
+        fb.classList.add('show');
+        fb.textContent = correct
+          ? "Correct — this option gives the model role, constraints and clear structure."
+          : "Not quite — the highlighted option is best because it specifies role, constraints, and structure explicitly.";
+        addXP(15);
+      }, {once:true});
+    });
+  }
+  ['ex1','ex2','ex3','ex4','exFinal1','exFinal2','exFinal3'].forEach(id=>{
+    wireExercise(id, id+'fb');
+  });
+
+  // check final challenge completion -> stamp + unlock continue
+  function checkFinalDone(){
+    const ids = ['exFinal1','exFinal2','exFinal3'];
+    const allDone = ids.every(id=>{
+      const ex = document.getElementById(id);
+      return ex && [...ex.querySelectorAll('.opt-btn')].every(b=>b.disabled);
+    });
+    if(allDone){
+      document.getElementById('finalStamp').style.display='block';
+      unlock('continue');
+      addXP(50);
+    }
+  }
+  ['exFinal1','exFinal2','exFinal3'].forEach(id=>{
+    document.getElementById(id).addEventListener('click', ()=> setTimeout(checkFinalDone, 50));
+  });
+
+  // ---------------- Quiz engine ----------------
+  const quizData = {
+    'quiz-1': {
+      title: 'Quiz — Foundations & Zero-Shot',
+      unlockTarget: 'module-2',
+      unlockLabel: 'Stage 02: Few-Shot & Structure',
+      questions: [
+        {
+          q: 'What best defines zero-shot prompting?',
+          options: [
+            'Asking the model to perform a task using only the instruction, with no worked examples',
+            'Giving the model exactly one example before the real task',
+            'Training the model on new data before prompting it',
+            'Only using single-word prompts'
+          ],
+          correct: 0,
+          explain: 'Zero-shot means no examples are provided — the model relies on its pretrained knowledge plus the clarity of your instruction.'
+        },
+        {
+          q: 'Which of these is NOT typically one of the five core parts of a prompt\'s anatomy?',
+          options: ['Persona/role', 'Output format', 'The model\'s training dataset size', 'Context'],
+          correct: 2,
+          explain: 'A prompt\'s anatomy covers persona, task, context, input, and output format — not the model\'s training data size, which isn\'t something you specify in a prompt.'
+        },
+        {
+          q: 'Role prompting ("You are a senior data analyst...") primarily does what?',
+          options: [
+            'Grants the model new factual knowledge it didn\'t have before',
+            'Narrows tone, vocabulary and depth of the response',
+            'Increases the model\'s maximum output length',
+            'Bypasses the need for an output format'
+          ],
+          correct: 1,
+          explain: 'A persona narrows the space of plausible responses in tone and depth — it doesn\'t add new capabilities or knowledge.'
+        },
+        {
+          q: 'For getting consistent, well-structured release notes from a raw changelog, which zero-shot prompt is best engineered?',
+          options: [
+            '"Turn this into release notes."',
+            '"Make this changelog sound professional and nice please, thanks so much!"',
+            '"You are a release manager. Convert the changelog into 3 sections (New, Improved, Fixed) with short plain-English bullets."',
+            '"Release notes, go."'
+          ],
+          correct: 2,
+          explain: 'This option specifies role, task, and explicit output structure — the anatomy that makes zero-shot prompts reliable.'
+        }
+      ]
+    },
+    'quiz-2': {
+      title: 'Quiz — Few-Shot & Output Structuring',
+      unlockTarget: 'module-3',
+      unlockLabel: 'Stage 03: Chain-of-Thought',
+      questions: [
+        {
+          q: 'Few-shot prompting primarily leverages what capability?',
+          options: ['Fine-tuning on new data', 'In-context pattern completion from worked examples', 'Longer context windows only', 'Temperature adjustment'],
+          correct: 1,
+          explain: 'Few-shot relies on in-context learning — the model completes the pattern demonstrated by the examples in the prompt itself.'
+        },
+        {
+          q: 'What\'s a real risk of including too many, overly similar examples?',
+          options: [
+            'The model will refuse to answer',
+            'It can bias the output and waste tokens with little added benefit',
+            'It guarantees factual accuracy',
+            'It removes the need for an output format'
+          ],
+          correct: 1,
+          explain: 'Beyond a handful of diverse examples, returns diminish — redundant, similar examples cost tokens and can skew the response.'
+        },
+        {
+          q: 'What\'s the best practice for controlling exact output format?',
+          options: [
+            'Hope the model infers it',
+            'Use delimiters and/or an explicit schema (e.g. JSON keys)',
+            'Write the prompt in all caps',
+            'Avoid giving any examples'
+          ],
+          correct: 1,
+          explain: 'Delimiters and schemas remove ambiguity about where input ends and how output should be structured for reliable parsing.'
+        },
+        {
+          q: 'Which example set is best formatted for reliable in-context learning?',
+          options: [
+            'Ten nearly identical, all-positive examples',
+            'Three examples, each in a different format with no separator',
+            'Three examples using a consistent "Input: … / Output: …" structure, covering different edge cases',
+            'One example repeated three times'
+          ],
+          correct: 2,
+          explain: 'Consistent structure plus diverse coverage helps the model generalize the pattern rather than overfit to one wording or one class.'
+        }
+      ]
+    },
+    'quiz-3': {
+      title: 'Quiz — Chain-of-Thought',
+      unlockTarget: 'module-4',
+      unlockLabel: 'Stage 04: Structured Mastery',
+      questions: [
+        {
+          q: 'What does chain-of-thought (CoT) prompting encourage the model to do?',
+          options: [
+            'Skip straight to the final answer for speed',
+            'Lay out intermediate reasoning steps before the final answer',
+            'Only output single words',
+            'Ignore the given context'
+          ],
+          correct: 1,
+          explain: 'CoT explicitly asks for the intermediate reasoning steps, which tends to help on multi-step problems.'
+        },
+        {
+          q: 'CoT prompting is the best fit for which kind of task?',
+          options: ['Simple factual lookups', 'Multi-step math or logic problems', 'Single-word classification', 'Retrieving a known date'],
+          correct: 1,
+          explain: 'Tasks with multiple dependent steps benefit most from making the reasoning explicit; simple lookups don\'t need it.'
+        },
+        {
+          q: 'The self-consistency technique involves what?',
+          options: [
+            'Asking the question only once and trusting the answer',
+            'Sampling multiple independent reasoning chains and taking the majority-vote answer',
+            'Disabling reasoning entirely',
+            'Always using zero-shot instead of CoT'
+          ],
+          correct: 1,
+          explain: 'Self-consistency generates several reasoning chains and picks the most common final answer, reducing the impact of any one faulty chain.'
+        },
+        {
+          q: 'Which task benefits LEAST from chain-of-thought prompting?',
+          options: [
+            'A multi-step word problem',
+            'A simple factual lookup like "capital of France"',
+            'A logic puzzle with several dependent clues',
+            'Debugging code with several possible causes'
+          ],
+          correct: 1,
+          explain: 'Simple factual lookups need no intermediate reasoning — CoT here just adds latency and cost without accuracy benefit.'
+        }
+      ]
+    },
+    'quiz-4': {
+      title: 'Quiz — Structured Mastery',
+      unlockTarget: 'final',
+      unlockLabel: 'Final Challenge',
+      questions: [
+        {
+          q: 'What is the primary purpose of a system message/role in chat-style APIs?',
+          options: [
+            'To carry the specific one-off request',
+            'To set persistent, background behavior that holds across the conversation',
+            'To store the conversation history only',
+            'To increase the model\'s token limit'
+          ],
+          correct: 1,
+          explain: 'The system layer sets persona, rules, and constraints that persist, while user messages carry the specific request.'
+        },
+        {
+          q: 'What is a prompt template used for?',
+          options: [
+            'A one-time, never-reused prompt',
+            'A reusable skeleton with placeholders that can be filled with different inputs',
+            'A way to avoid specifying output format',
+            'A method for training a new model'
+          ],
+          correct: 1,
+          explain: 'Templates let you reuse the same engineered structure across many inputs by filling in variables like {{document}}.'
+        },
+        {
+          q: 'What helps defend against untrusted input hijacking a prompt\'s intent?',
+          options: [
+            'Pasting user input directly with no separation',
+            'Clearly delimiting untrusted input and instructing the model to treat it as data, not instructions',
+            'Removing the system message entirely',
+            'Making the prompt longer'
+          ],
+          correct: 1,
+          explain: 'Clear delimiters plus an explicit "treat as data" instruction reduce the risk of inserted text being interpreted as new commands.'
+        },
+        {
+          q: 'A structured prompt gets facts right but returns prose instead of the required JSON. Which layer should you fix first?',
+          options: ['Persona/system layer', 'Few-shot examples layer', 'Output format layer', 'None — start over from scratch'],
+          correct: 2,
+          explain: 'Since facts are correct, the issue is isolated to the output format layer — the iterative-refinement workflow means patching just that layer.'
+        }
+      ]
+    }
+  };
+
+  function buildQuiz(sectionId){
+    const data = quizData[sectionId];
+    const container = document.getElementById(sectionId);
+    if(!container || container.dataset.built) return;
+    container.dataset.built = 'true';
+
+    let dotsHtml = data.questions.map((_,i)=>`<div class="qdot ${i===0?'current':''}" data-qdot="${i}"></div>`).join('');
+
+    let qHtml = data.questions.map((q,i)=>{
+      let optsHtml = q.options.map((opt,oi)=>`<button class="opt-btn" data-oi="${oi}">${opt}</button>`).join('');
+      return `
+        <div class="quiz-q ${i===0?'active':''}" data-qi="${i}">
+          <div class="qtext">Q${i+1}. ${q.q}</div>
+          ${optsHtml}
+          <div class="quiz-explain"></div>
+          <div style="margin-top:14px;">
+            <button class="btn quiz-nextbtn" style="display:none;">${i===data.questions.length-1 ? 'See Results →' : 'Next Question →'}</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="quiz-panel">
+        <div class="eyebrow">Knowledge Check</div>
+        <div class="quiz-header"><h2 class="section-title">${data.title}</h2></div>
+        <div class="quiz-progress">${dotsHtml}</div>
+        ${qHtml}
+        <div class="quiz-summary">
+          <div class="score-big"><span class="score-num">0</span>/${data.questions.length}</div>
+          <div class="score-msg"></div>
+          <button class="btn amber quiz-continue-btn">Unlock ${data.unlockLabel} →</button>
+        </div>
+      </div>`;
+
+    let score = 0;
+    const qEls = container.querySelectorAll('.quiz-q');
+    const dots = container.querySelectorAll('.qdot');
+
+    qEls.forEach((qEl, qi)=>{
+      const q = data.questions[qi];
+      const btns = qEl.querySelectorAll('.opt-btn');
+      const explainEl = qEl.querySelector('.quiz-explain');
+      const nextBtn = qEl.querySelector('.quiz-nextbtn');
+
+      btns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const oi = parseInt(btn.getAttribute('data-oi'));
+          const isCorrect = oi === q.correct;
+          btns.forEach(b=>b.disabled = true);
+          btn.classList.add(isCorrect ? 'correct' : 'wrong');
+          btns.forEach(b=>{
+            if(parseInt(b.getAttribute('data-oi'))===q.correct) b.classList.add('correct');
+          });
+          explainEl.textContent = (isCorrect ? '✓ Correct. ' : '✕ Not quite. ') + q.explain;
+          explainEl.classList.add('show');
+          if(!isCorrect) explainEl.classList.add('wrong-explain');
+          if(isCorrect){ score++; addXP(25); }
+          dots[qi].classList.remove('current');
+          dots[qi].classList.add('done');
+          nextBtn.style.display = 'inline-flex';
+        }, {once:true});
+      });
+
+      nextBtn.addEventListener('click', ()=>{
+        if(qi < qEls.length - 1){
+          qEl.classList.remove('active');
+          qEls[qi+1].classList.add('active');
+          dots[qi+1].classList.add('current');
+        } else {
+          qEl.classList.remove('active');
+          const summary = container.querySelector('.quiz-summary');
+          summary.classList.add('show');
+          summary.querySelector('.score-num').textContent = score;
+          const pct = score / data.questions.length;
+          let msg;
+          if(pct === 1) msg = 'Perfect score — this stage\'s concepts are locked in.';
+          else if(pct >= 0.5) msg = 'Solid grasp — consider revisiting any missed explanations above before moving on.';
+          else msg = 'Worth a second pass through this module — the explanations above highlight what to review.';
+          summary.querySelector('.score-msg').textContent = msg;
+        }
+      }, {once:false});
+    });
+
+    container.querySelector('.quiz-continue-btn').addEventListener('click', ()=>{
+      state.completedQuizzes[sectionId] = true;
+      unlock(data.unlockTarget);
+      goTo(data.unlockTarget);
+    });
+  }
+
+  // Build all quiz panels up front
+  ['quiz-1','quiz-2','quiz-3','quiz-4'].forEach(id=> buildQuiz(id));
+
+  refreshNav();
+  updateProgress();
+})();
+</script>
+</body>
+</html>
