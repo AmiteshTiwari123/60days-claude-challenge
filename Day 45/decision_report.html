@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #0f0f14;
+    --bg-card: #1a1a24;
+    --bg-card-alt: #1e1e2e;
+    --text-primary: #f0f0f5;
+    --text-secondary: #8888a0;
+    --accent-green: #34d399;
+    --accent-red: #f87171;
+    --accent-blue: #60a5fa;
+    --accent-gold: #fbbf24;
+    --accent-purple: #a78bfa;
+    --border-subtle: rgba(255,255,255,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter','Segoe UI',system-ui,sans-serif;
+    padding: 32px 16px 60px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { text-align: center; padding: 20px 0 24px; }
+  header h1 { font-size: 28px; font-weight: 800; letter-spacing: 0.5px; }
+  header p.subtitle { color: var(--text-secondary); font-size: 16px; margin-top: 8px; }
+  header p.date { color: var(--text-secondary); font-size: 12px; margin-top: 6px; }
+  .gradient-line {
+    height: 3px; margin: 20px 0 8px; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-gold));
+  }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    border-left: 4px solid var(--accent-blue);
+    transition: transform 0.2s ease;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card.purple { border-left-color: var(--accent-purple); }
+  .card.green { border-left-color: var(--accent-green); }
+  .card.red { border-left-color: var(--accent-red); }
+  .card.gold { border-left-color: var(--accent-gold); background: var(--bg-card-alt); padding: 34px; box-shadow: 0 0 20px rgba(251,191,36,0.15), 0 4px 24px rgba(0,0,0,0.3); }
+  .section-title {
+    font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .section-title.blue { color: var(--accent-blue); }
+  .section-title.green { color: var(--accent-green); }
+  .section-title.purple { color: var(--accent-purple); }
+  .section-title.red { color: var(--accent-red); }
+  .section-title.gold { color: var(--accent-gold); }
+  p, li { font-size: 15px; line-height: 1.7; color: var(--text-primary); }
+  .label { font-size: 12px; font-weight: 500; text-transform: uppercase; color: var(--text-secondary); margin-top: 14px; margin-bottom: 4px; }
+  ul { padding-left: 20px; }
+
+  .option-card {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .option-card h3 { font-size: 17px; margin-bottom: 8px; }
+  .option-card h3.a { color: var(--accent-blue); }
+  .option-card h3.b { color: var(--accent-green); }
+  .option-card h3.c { color: var(--accent-purple); }
+
+  .matrix-row { margin-bottom: 18px; }
+  .matrix-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+  .bar-group { display: flex; flex-direction: column; gap: 6px; }
+  .bar-container {
+    height: 28px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; position: relative;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 10px; color: white; font-weight: 700; font-size: 13px;
+    width: 0%; animation: growBar 0.8s ease-out forwards;
+  }
+  .bar-a { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+  .bar-b { background: linear-gradient(90deg, #34d399, #10b981); }
+  .bar-c { background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
+  @keyframes growBar { from { width: 0%; } to { width: var(--target); } }
+
+  .total-row {
+    margin-top: 20px; padding: 16px; border-radius: 10px; background: rgba(255,255,255,0.04);
+    font-weight: 700; font-size: 16px;
+  }
+  .total-row .bar-container { height: 32px; }
+  .winner-badge {
+    display: inline-block; background: var(--accent-gold); color: #1a1a24; font-size: 11px;
+    font-weight: 700; padding: 3px 8px; border-radius: 6px; margin-left: 8px; text-transform: uppercase;
+  }
+
+  .day-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .day-num { min-width: 70px; font-weight: 700; color: var(--accent-green); font-size: 13px; }
+
+  .verdict-name { font-size: 30px; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px; }
+  .hard-truth { font-style: italic; color: var(--text-secondary); margin-top: 16px; }
+
+  .share-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .mini-card {
+    flex: 1; min-width: 200px; background: var(--bg-card-alt); padding: 16px; border-radius: 12px;
+    border: 1px solid var(--border-subtle); display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;
+  }
+  .mini-card h4 { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; }
+  .watermark { font-size: 10px; color: var(--text-secondary); margin-top: 12px; text-align: center; }
+
+  footer { text-align: center; color: var(--text-secondary); font-size: 12px; margin-top: 40px; }
+
+  @media (max-width: 600px) {
+    .card { padding: 20px; }
+    .card.gold { padding: 24px; }
+    body { padding: 20px 12px 40px; }
+    .share-row { flex-direction: column; }
+    header h1 { font-size: 24px; }
+    .verdict-name { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>DECISION REPORT</h1>
+    <p class="subtitle">Trading vs. Tutoring vs. Job Search vs. Clearing 7 Backlog Subjects</p>
+    <p class="date">Generated on July 15, 2026</p>
+  </header>
+  <div class="gradient-line"></div>
+
+  <!-- SECTION 1 -->
+  <div class="card">
+    <div class="section-title blue">The Real Decision</div>
+    <p>You're not choosing between four hobbies — you're choosing what gets your best hours before your degree is at risk. The trade-off: every hour on intraday trading or 8 hours of tutoring is an hour not spent clearing 7 backlogs in a 4-month window.</p>
+    <p style="margin-top:10px;">It's emotionally hard because trading and tutoring feel like your financial lifeline, while backlogs feel like a formality — until they cost you your degree and any job offer that needs it.</p>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="card green">
+    <div class="section-title green">The Case For Each Option</div>
+
+    <div class="option-card">
+      <h3 class="a">Option A: Keep All Four Going (Status Quo)</h3>
+      <p><strong>Strongest case:</strong> You keep earning from tutoring and trading while attempting backlogs — no income gap, no gap on resume.</p>
+      <p class="label">Hidden Upside</p>
+      <p>You stay financially independent right now, which reduces panic-driven bad decisions later.</p>
+      <p class="label">Biggest Weakness</p>
+      <p>You already said discipline and sleep are broken — spreading across 4 fronts with no consistency is how backlogs stay unclear past 4 months.</p>
+      <p class="label">Best if you value:</p>
+      <p>Immediate cash flow over deep focus.</p>
+    </div>
+
+    <div class="option-card">
+      <h3 class="b">Option B: Pause Trading, Focus on Backlogs + Tutoring</h3>
+      <p><strong>Strongest case:</strong> Tutoring income continues, but you free up the mental bandwidth trading demands (intraday needs constant attention during market hours).</p>
+      <p class="label">Hidden Upside</p>
+      <p>Intraday trading without full attention usually loses money anyway — pausing it may protect capital, not just time.</p>
+      <p class="label">Biggest Weakness</p>
+      <p>You lose a potential income stream you were counting on to "live the dream."</p>
+      <p class="label">Best if you value:</p>
+      <p>Degree completion + steady income over speculative upside.</p>
+    </div>
+
+    <div class="option-card">
+      <h3 class="c">Option C: Pause Tutoring, Focus on Backlogs + Trading</h3>
+      <p><strong>Strongest case:</strong> Frees 8 hours a day — the single biggest time block you mentioned — directly into backlog study.</p>
+      <p class="label">Hidden Upside</p>
+      <p>Trading can be done in short structured windows; tutoring cannot (it's fixed-hour, low-flexibility).</p>
+      <p class="label">Biggest Weakness</p>
+      <p>Trading income is unstable — you could lose both time and money if it goes wrong under stress.</p>
+      <p class="label">Best if you value:</p>
+      <p>Reclaiming time over reclaiming certainty of income.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="card purple">
+    <div class="section-title purple">Assumption Buster</div>
+    <p class="label">3 Assumptions You May Be Making</p>
+    <ul>
+      <li>That you must keep earning at the same level for 4 months straight, with no dip allowed.</li>
+      <li>That doing all four things "somewhat" is safer than doing two things "fully."</li>
+      <li>That your unemployment fear is about income today — when your real risk is backlogs delaying your degree, which delays every job offer.</li>
+    </ul>
+    <p class="label">2 Biases At Play</p>
+    <ul>
+      <li><strong>Loss Aversion:</strong> You're scared to pause trading/tutoring because it feels like losing money you already "have," even though the real loss is a delayed degree.</li>
+      <li><strong>Present Bias:</strong> Sleep and discipline problems are being treated as fixed traits, not something addressable — so you're designing your plan around a broken routine instead of fixing it.</li>
+    </ul>
+    <p class="label">1 Thing You're Definitely Ignoring</p>
+    <p>You named sleep and discipline as the actual blocker — not the number of options. No combination of A, B, or C fixes anything if sleep stays broken.</p>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="card">
+    <div class="section-title blue">Decision Matrix</div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Life/Career Upside</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:50%; animation-delay:0.1s;">5</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:80%; animation-delay:0.2s;">8</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:60%; animation-delay:0.3s;">6</div></div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Financial Safety</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:60%; animation-delay:0.1s;">6</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:70%; animation-delay:0.2s;">7</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:40%; animation-delay:0.3s;">4</div></div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Growth & Learning</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:40%; animation-delay:0.1s;">4</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:80%; animation-delay:0.2s;">8</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:60%; animation-delay:0.3s;">6</div></div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Stress Level (10 = low stress)</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:20%; animation-delay:0.1s;">2</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:60%; animation-delay:0.2s;">6</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:40%; animation-delay:0.3s;">4</div></div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Reversibility (10 = easy to undo)</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:70%; animation-delay:0.1s;">7</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:80%; animation-delay:0.2s;">8</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:70%; animation-delay:0.3s;">7</div></div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Long-Term Alignment</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:40%; animation-delay:0.1s;">4</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:90%; animation-delay:0.2s;">9</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:60%; animation-delay:0.3s;">6</div></div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="matrix-label">Regret Risk (10 = low regret)</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:30%; animation-delay:0.1s;">3</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:80%; animation-delay:0.2s;">8</div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:50%; animation-delay:0.3s;">5</div></div>
+      </div>
+    </div>
+
+    <div class="total-row">
+      <div class="matrix-label">TOTAL (out of 70)</div>
+      <div class="bar-group">
+        <div class="bar-container"><div class="bar-fill bar-a" style="--target:44%; animation-delay:0.4s;">31 — Option A</div></div>
+        <div class="bar-container"><div class="bar-fill bar-b" style="--target:80%; animation-delay:0.5s;">56 — Option B <span class="winner-badge">Winner</span></div></div>
+        <div class="bar-container"><div class="bar-fill bar-c" style="--target:60%; animation-delay:0.6s;">42 — Option C</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="card red">
+    <div class="section-title red">Premortem — 12 Months From Now, It Failed</div>
+
+    <div class="option-card">
+      <h3 class="a">Option A (Keep All Four) — Why It Failed</h3>
+      <ul>
+        <li>Sleep never got fixed, so quality of study and trading both dropped.</li>
+        <li>Backlogs stayed unclear because attention was split across 4 things daily.</li>
+        <li>Trading losses ate into tutoring income during a bad market week.</li>
+      </ul>
+      <p class="label">Early Warning Sign</p>
+      <p>You start missing tutoring classes or backlog study sessions in week 2-3.</p>
+      <p class="label">Prevention Action</p>
+      <p>Set a hard weekly check: if any 2 of the 4 areas slip in the same week, cut one immediately.</p>
+    </div>
+
+    <div class="option-card">
+      <h3 class="b">Option B (Pause Trading) — Why It Failed</h3>
+      <ul>
+        <li>Tutoring income wasn't enough, so financial stress bled into study focus.</li>
+        <li>You couldn't resist re-entering trades during market hours out of habit.</li>
+        <li>Backlogs cleared but job search got delayed anyway due to burnout.</li>
+      </ul>
+      <p class="label">Early Warning Sign</p>
+      <p>You catch yourself checking stock charts "just once" during study hours.</p>
+      <p class="label">Prevention Action</p>
+      <p>Block trading apps/notifications during fixed study hours — remove the temptation, not just the intent.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="card green">
+    <div class="section-title green">7-Day Test Plan</div>
+    <div class="day-row"><div class="day-num">Day 1-2</div><div>List all 7 backlog subjects, rank by difficulty, and check your actual free hours after tutoring — no guessing.</div></div>
+    <div class="day-row"><div class="day-num">Day 1-2</div><div>Research if trading can shift to a lighter, non-intraday style (swing/positional) to reduce daily attention drain.</div></div>
+    <div class="day-row"><div class="day-num">Day 3-4</div><div>Run one full day with trading paused — track how much extra focused study time you actually get.</div></div>
+    <div class="day-row"><div class="day-num">Day 5-6</div><div>Talk to your tutoring employer/students about a temporary reduced schedule for 4 months if needed.</div></div>
+    <div class="day-row"><div class="day-num">Day 7</div><div>Decide: if Day 3-4 test showed real backlog progress, go with Option B for the 4-month window.</div></div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="card gold">
+    <div class="section-title gold">The Verdict</div>
+    <div class="verdict-name">Option B: Pause Trading, Focus on Backlogs + Tutoring</div>
+    <p>It wins because it protects your income (tutoring) while removing the highest-focus-cost activity (intraday trading) during the exact window you need deep, undistracted study.</p>
+    <p style="margin-top:8px;">It scores highest on long-term alignment and regret risk — the two things that matter most with only 4 months on the clock.</p>
+    <p class="label">What Could Flip This</p>
+    <p>If tutoring income alone genuinely can't cover your family's needs, Option C becomes worth revisiting — but only after you've tested it, not assumed it.</p>
+    <p class="hard-truth">Hard truth: you don't have a "too many options" problem — you have a discipline and sleep problem, and no option on this board fixes that for you.</p>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="card gold">
+    <div class="section-title gold">Shareable Cards</div>
+    <div class="share-row">
+      <div class="mini-card">
+        <h4>Matrix Summary</h4>
+        <p style="font-size:14px;">A: Keep All Four — 31/70<br>B: Pause Trading — 56/70<br>C: Pause Tutoring — 42/70</p>
+        <div class="watermark">Built with Claude AI</div>
+      </div>
+      <div class="mini-card">
+        <h4>Verdict</h4>
+        <p style="font-size:14px;"><strong style="color:var(--accent-gold);">Pause Trading.</strong> Protect income, reclaim focus, clear backlogs in 4 months.</p>
+        <div class="watermark">Built with Claude AI</div>
+      </div>
+      <div class="mini-card">
+        <h4>Share Hook</h4>
+        <p style="font-size:14px;">"I almost let 4 things fail me instead of fixing 1."<br>Final year. 7 backlogs. Real talk on what actually moves the needle.<br><strong>Try your own Decision Report →</strong></p>
+        <div class="watermark">Built with Claude AI</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Built with Claude AI | ABTalks 60-Day Challenge</footer>
+
+</div>
+</body>
+</html>
