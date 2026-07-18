@@ -1,0 +1,35 @@
+# Day 48 - Build The Verdict Engine
+
+## 60 Days Claude AI Challenge
+
+Today, I built **The Verdict Engine**, an AI-powered decision-support application designed to help users make better decisions using grounded research and weighted scoring.
+
+## What I Learned
+
+- **Grounded Research:** Using real and citable sources instead of fabricated data.
+- **Weighted Decision Scoring:** Allowing users to assign priority weights to different criteria and dynamically update rankings.
+- **Transparency by Design:** Clearly presenting sources, estimates, and resolved conflicts.
+- **Decision-Support UX:** Building a responsive and user-friendly interface for comparing real-world options.
+
+## Key Features
+
+- AI-powered research and comparison
+- Adjustable criteria weights
+- Live ranking updates
+- Source transparency
+- Conflict resolution insights
+- Interactive decision-support interface
+
+## Tools Used
+
+- Claude AI
+- HTML
+- CSS
+- JavaScript
+- GitHub
+
+## Key Takeaway
+
+This challenge helped me understand how AI can be used to build transparent decision-support systems that combine real research, user priorities, and weighted scoring to make complex decisions easier.
+
+#60DaysChallenge #ClaudeAI #ArtificialIntelligence #AI #WebDevelopment
