@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Solo Console — Asana vs monday vs ClickUp vs Notion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#12161d;
+  --panel:#1a212b;
+  --panel-raised:#212a36;
+  --line: rgba(233,230,221,0.10);
+  --line-strong: rgba(233,230,221,0.18);
+  --paper:#eee8da;
+  --paper-dim:#d9d2c0;
+  --text:#e9e6dd;
+  --text-dim:#a9a89f;
+  --text-dimmer:#767468;
+  --brass:#c9975a;
+  --brass-bright:#e0b378;
+  --teal:#5aa696;
+  --teal-dim:#3f7b6f;
+  --warn:#d1894a;
+  --radius:14px;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:
+    radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(201,151,90,0.08), transparent),
+    radial-gradient(ellipse 900px 500px at 100% 10%, rgba(90,166,150,0.06), transparent),
+    var(--ink);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+
+::selection{ background:var(--brass); color:#12161d; }
+a{ color:var(--brass-bright); }
+:focus-visible{ outline:2px solid var(--brass-bright); outline-offset:2px; }
+
+.wrap{ max-width:1180px; margin:0 auto; padding:0 24px; }
+
+/* ---------- HERO ---------- */
+header.hero{ padding:64px 0 40px; border-bottom:1px solid var(--line); }
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--teal); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+}
+.eyebrow::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px rgba(90,166,150,0.18); }
+h1.title{
+  font-family:var(--serif); font-weight:600; font-size:clamp(34px,5vw,58px);
+  line-height:1.03; margin:0 0 20px; letter-spacing:-0.01em; max-width:16ch;
+}
+h1.title em{ font-style:italic; color:var(--brass-bright); font-weight:500; }
+.hero-sub{ font-size:17px; color:var(--text-dim); max-width:62ch; margin:0 0 28px; }
+.hero-meta{
+  display:flex; flex-wrap:wrap; gap:10px;
+}
+.chip{
+  font-family:var(--mono); font-size:12px; padding:7px 12px; border-radius:100px;
+  border:1px solid var(--line-strong); color:var(--text-dim); background:rgba(255,255,255,0.02);
+}
+.chip b{ color:var(--paper); font-weight:500; }
+
+/* ---------- LAYOUT ---------- */
+main{ padding:52px 0 90px; }
+.section-head{ margin-bottom:28px; }
+.section-num{ font-family:var(--mono); font-size:12px; color:var(--brass); letter-spacing:0.1em; margin-bottom:8px; }
+h2.section-title{ font-family:var(--serif); font-size:clamp(24px,3vw,32px); font-weight:600; margin:0 0 10px; }
+.section-desc{ color:var(--text-dim); max-width:70ch; font-size:15px; }
+
+/* ---------- CONSOLE ---------- */
+.console{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  background:var(--panel); border:1px solid var(--line-strong); border-radius:var(--radius);
+  overflow:hidden;
+}
+@media (max-width:880px){ .console{ grid-template-columns:1fr; } }
+
+.console-panel{ padding:32px; }
+.console-panel.dials{ border-right:1px solid var(--line); }
+@media (max-width:880px){ .console-panel.dials{ border-right:none; border-bottom:1px solid var(--line); } }
+
+.panel-label{
+  font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.12em;
+  color:var(--text-dimmer); margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;
+}
+.reset-btn{
+  font-family:var(--mono); font-size:11px; background:none; border:1px solid var(--line-strong);
+  color:var(--text-dim); padding:5px 10px; border-radius:8px; cursor:pointer; transition:all .15s ease;
+}
+.reset-btn:hover{ border-color:var(--brass); color:var(--brass-bright); }
+
+.dial-row{ margin-bottom:20px; }
+.dial-row:last-child{ margin-bottom:0; }
+.dial-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; gap:8px; }
+.dial-name{ font-size:14px; font-weight:500; color:var(--paper); }
+.dial-val{ font-family:var(--mono); font-size:13px; color:var(--brass-bright); min-width:22px; text-align:right; }
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:6px; border-radius:100px;
+  background:linear-gradient(90deg, var(--brass) var(--fill,50%), rgba(255,255,255,0.08) var(--fill,50%));
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+  background:var(--brass-bright); border:3px solid var(--ink); box-shadow:0 0 0 1px var(--brass);
+  cursor:grab; margin-top:0;
+}
+input[type=range]::-webkit-slider-thumb:active{ cursor:grabbing; }
+input[type=range]::-moz-range-thumb{
+  width:18px; height:18px; border-radius:50%; background:var(--brass-bright);
+  border:3px solid var(--ink); box-shadow:0 0 0 1px var(--brass); cursor:grab;
+}
+input[type=range]::-moz-range-track{ height:6px; border-radius:100px; background:rgba(255,255,255,0.08); }
+
+/* leaderboard */
+.leaderboard{ padding:32px; }
+.rank-row{
+  display:grid; grid-template-columns:28px 1fr auto; align-items:center; gap:14px;
+  padding:12px 0; border-bottom:1px solid var(--line);
+  transition: transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.rank-row:last-child{ border-bottom:none; }
+.rank-num{ font-family:var(--serif); font-size:20px; color:var(--text-dimmer); font-style:italic; }
+.rank-row.is-first .rank-num{ color:var(--brass-bright); }
+.rank-body{ min-width:0; }
+.rank-name-row{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+.rank-name{ font-weight:600; font-size:15px; color:var(--paper); }
+.rank-tag{ font-family:var(--mono); font-size:10px; padding:2px 7px; border-radius:5px; background:rgba(90,166,150,0.15); color:var(--teal); text-transform:uppercase; letter-spacing:.05em; }
+.bar-track{ height:8px; background:rgba(255,255,255,0.06); border-radius:100px; overflow:hidden; }
+.bar-fill{ height:100%; border-radius:100px; background:linear-gradient(90deg, var(--teal-dim), var(--teal)); transition:width .5s cubic-bezier(.2,.8,.2,1); }
+.rank-row.is-first .bar-fill{ background:linear-gradient(90deg, var(--brass), var(--brass-bright)); }
+.rank-score{ font-family:var(--mono); font-size:16px; color:var(--paper); text-align:right; min-width:46px; }
+
+.empty-state{
+  padding:40px 20px; text-align:center; color:var(--text-dim); font-size:14px;
+  border:1px dashed var(--line-strong); border-radius:10px;
+}
+.empty-state b{ color:var(--paper); display:block; margin-bottom:6px; font-family:var(--serif); font-size:18px; font-weight:600; }
+
+.tie-note{ font-family:var(--mono); font-size:11px; color:var(--brass); margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
+
+/* ---------- TABLE ---------- */
+.table-scroll{ overflow-x:auto; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--panel); }
+table.matrix{ width:100%; border-collapse:collapse; min-width:820px; }
+table.matrix th, table.matrix td{ padding:16px 18px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+table.matrix thead th{
+  font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dimmer);
+  background:var(--panel-raised); position:sticky; top:0;
+}
+table.matrix thead th.tool-head{ color:var(--paper); font-size:14px; text-transform:none; letter-spacing:0; font-family:var(--sans); font-weight:600; }
+table.matrix tbody tr:last-child td{ border-bottom:none; }
+table.matrix tbody tr:hover{ background:rgba(255,255,255,0.015); }
+.crit-cell{ min-width:180px; }
+.crit-name{ font-weight:600; color:var(--paper); font-size:14px; margin-bottom:4px; }
+.crit-desc{ font-size:12px; color:var(--text-dimmer); }
+.fact-cell{ min-width:220px; }
+.fact-score{ display:flex; align-items:baseline; gap:8px; margin-bottom:6px; }
+.fact-num{ font-family:var(--mono); font-size:15px; color:var(--teal); font-weight:600; }
+.fact-text{ font-size:13px; color:var(--text-dim); line-height:1.5; }
+.cite{ font-family:var(--mono); font-size:10px; color:var(--brass); text-decoration:none; vertical-align:super; margin-left:1px; }
+.est-badge{
+  display:inline-block; font-family:var(--mono); font-size:9px; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--warn); border:1px solid rgba(209,137,74,0.4); background:rgba(209,137,74,0.08);
+  padding:2px 6px; border-radius:5px; margin-bottom:6px;
+}
+
+/* ---------- COLLAPSIBLES ---------- */
+details.panel{
+  border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--panel);
+  padding:0; overflow:hidden;
+}
+details.panel + details.panel{ margin-top:16px; }
+details.panel summary{
+  cursor:pointer; list-style:none; padding:22px 26px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+details.panel summary::-webkit-details-marker{ display:none; }
+.summary-left{ display:flex; align-items:center; gap:14px; }
+.summary-icon{
+  width:34px; height:34px; border-radius:9px; background:var(--panel-raised); border:1px solid var(--line-strong);
+  display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-style:italic; color:var(--brass-bright); flex-shrink:0;
+}
+.summary-title{ font-family:var(--serif); font-weight:600; font-size:18px; color:var(--paper); }
+.summary-sub{ font-size:13px; color:var(--text-dimmer); margin-top:2px; }
+.chevron{ font-family:var(--mono); color:var(--text-dim); transition:transform .25s ease; flex-shrink:0; }
+details[open] .chevron{ transform:rotate(45deg); }
+.panel-body{ padding:0 26px 26px; border-top:1px solid var(--line); }
+.panel-body-inner{ padding-top:22px; }
+
+.source-list{ list-style:none; margin:0; padding:0; display:grid; gap:0; }
+.source-item{ display:grid; grid-template-columns:28px 1fr; gap:14px; padding:14px 0; border-bottom:1px solid var(--line); }
+.source-item:last-child{ border-bottom:none; }
+.source-idx{ font-family:var(--mono); font-size:12px; color:var(--brass); padding-top:2px; }
+.source-title{ font-size:14px; color:var(--paper); margin-bottom:3px; }
+.source-title a{ color:var(--paper); text-decoration:none; border-bottom:1px solid var(--line-strong); }
+.source-title a:hover{ color:var(--brass-bright); border-color:var(--brass-bright); }
+.source-used{ font-size:12px; color:var(--text-dimmer); }
+
+.method-block{ margin-bottom:24px; }
+.method-block:last-child{ margin-bottom:0; }
+.method-h{ font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--teal); margin-bottom:10px; }
+.method-p{ font-size:14px; color:var(--text-dim); line-height:1.65; margin:0 0 10px; }
+.conflict-box{
+  border-left:2px solid var(--warn); padding:12px 16px; background:rgba(209,137,74,0.06); border-radius:0 8px 8px 0; margin-bottom:12px;
+}
+.conflict-box:last-child{ margin-bottom:0; }
+.conflict-title{ font-size:13px; font-weight:600; color:var(--warn); margin-bottom:5px; }
+.conflict-text{ font-size:13px; color:var(--text-dim); }
+
+footer{ padding:36px 0 60px; border-top:1px solid var(--line); }
+.footer-note{ font-size:13px; color:var(--text-dimmer); max-width:70ch; }
+.footer-note + .footer-note{ margin-top:10px; }
+
+@media (max-width:600px){
+  .wrap{ padding:0 16px; }
+  header.hero{ padding:44px 0 32px; }
+  main{ padding:36px 0 60px; }
+  .console-panel{ padding:22px; }
+  .leaderboard{ padding:22px; }
+  table.matrix th, table.matrix td{ padding:12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Compare &amp; decide · Project management software</div>
+    <h1 class="title">Which tool actually <em>fits how you work alone?</em></h1>
+    <p class="hero-sub">Built for a solo freelancer or consultant choosing one project‑management tool for themselves — not a 40‑person rollout. Adjust the dials below to match what matters to <em>you</em>, and the ranking updates live underneath.</p>
+    <div class="hero-meta">
+      <span class="chip"><b>4</b> tools compared</span>
+      <span class="chip"><b>8</b> weighted criteria</span>
+      <span class="chip"><b>24</b> cited sources</span>
+      <span class="chip">Prices verified against official pages, July 2026</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ CONSOLE ============ -->
+    <section id="console-section">
+      <div class="section-head">
+        <div class="section-num">01 — The console</div>
+        <h2 class="section-title">Set your priorities</h2>
+        <p class="section-desc">Each dial is a criterion, weighted 0 (irrelevant to you) to 10 (decisive). The leaderboard on the right recalculates instantly as you move them — nothing is precomputed for a "default" persona.</p>
+      </div>
+
+      <div class="console">
+        <div class="console-panel dials">
+          <div class="panel-label">
+            <span>Priority dials</span>
+            <button class="reset-btn" id="resetBtn" type="button">Reset to even weights</button>
+          </div>
+          <div id="dialContainer"></div>
+        </div>
+        <div class="console-panel leaderboard">
+          <div class="panel-label"><span>Live ranking</span><span id="weightSum"></span></div>
+          <div id="leaderboard"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MATRIX ============ -->
+    <section id="matrix-section" style="margin-top:64px;">
+      <div class="section-head">
+        <div class="section-num">02 — The evidence</div>
+        <h2 class="section-title">Every data point behind the score</h2>
+        <p class="section-desc">The 1–10 figure in each cell is our normalization, not a vendor‑published index — the sentence below it is the sourced fact it's built from. Cells marked <span class="est-badge" style="margin:0 4px;">Estimate</span> mean no independent, isolated metric existed for that cell across the sources we reviewed, so the figure is our editorial judgment from qualitative review sentiment — treat it as directional, not authoritative.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="matrix" id="matrixTable"></table>
+      </div>
+    </section>
+
+    <!-- ============ RESEARCH PANELS ============ -->
+    <section id="panels-section" style="margin-top:56px;">
+      <div class="section-head">
+        <div class="section-num">03 — Show your work</div>
+        <h2 class="section-title">Sources &amp; methodology</h2>
+      </div>
+
+      <details class="panel" id="howPanel">
+        <summary>
+          <div class="summary-left">
+            <div class="summary-icon">?</div>
+            <div>
+              <div class="summary-title">How this was researched</div>
+              <div class="summary-sub">Methodology, scoring logic, and the conflicts we had to resolve</div>
+            </div>
+          </div>
+          <span class="chevron">+</span>
+        </summary>
+        <div class="panel-body"><div class="panel-body-inner" id="methodologyBody"></div></div>
+      </details>
+
+      <details class="panel" id="sourcesPanel">
+        <summary>
+          <div class="summary-left">
+            <div class="summary-icon">§</div>
+            <div>
+              <div class="summary-title">Sources panel</div>
+              <div class="summary-sub" id="sourceCountLabel">Every citation used in the table above</div>
+            </div>
+          </div>
+          <span class="chevron">+</span>
+        </summary>
+        <div class="panel-body"><div class="panel-body-inner"><ul class="source-list" id="sourceList"></ul></div></div>
+      </details>
+    </section>
+
+  </main>
+
+  <footer>
+    <p class="footer-note">Software pricing and plan limits change often — several sources here are dated within the last 30–90 days of writing (July 2026), and vendors adjust free‑tier caps, seat minimums, and AI credit systems with little notice. Confirm current numbers on each vendor's official pricing page before you commit a subscription.</p>
+    <p class="footer-note">This tool reflects one editorial reading of publicly available, cited sources. It is not sponsored by Asana, monday.com, ClickUp, or Notion, and no data point here was invented — where sources conflicted or where no sourced metric existed, that is disclosed rather than smoothed over.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+
+  // ---------------------------------------------------------------------
+  // DATA — every score below traces to a source object in SOURCES.
+  // sourced:true  => value comes from a directly cited fact/metric.
+  // sourced:false => editorial estimate (no isolated metric found); flagged in UI.
+  // ---------------------------------------------------------------------
+
+  const SOURCES = [
+    {t:"Asana — Pricing (official)", u:"https://asana.com/pricing"},
+    {t:"Asana Help Center — Subscriptions & pricing", u:"https://help.asana.com/s/article/asana-subscriptions-and-pricing?language=en_US"},
+    {t:"usecarly — Asana Free Plan Limits (2026)", u:"https://www.usecarly.com/blog/asana-free-plan-limits/"},
+    {t:"G2 — Compare Asana and monday Work Management", u:"https://www.g2.com/compare/asana-vs-monday-com-monday-com"},
+    {t:"G2 — Compare Asana and monday dev", u:"https://www.g2.com/compare/asana-vs-monday-dev"},
+    {t:"The Digital Project Manager — Asana vs. Notion (2026)", u:"https://thedigitalprojectmanager.com/tools/asana-vs-notion/"},
+    {t:"monday.com blog — ClickUp vs Asana: how they compare", u:"https://monday.com/blog/project-management/clickup-vs-asana-how-they-compare-and-which-to-choose/"},
+    {t:"ZenPilot — ClickUp vs Asana (2026)", u:"https://www.zenpilot.com/blog/clickup-vs-asana/"},
+    {t:"TaskRhino — Asana vs monday vs ClickUp (2026)", u:"https://www.taskrhino.ca/blog/asana-vs-monday-vs-clickup/"},
+    {t:"Vendr — monday.com pricing guide", u:"https://www.vendr.com/marketplace/monday-com"},
+    {t:"Lifestack — monday.com Pricing 2026", u:"https://lifestack.ai/blog/monday-com-pricing"},
+    {t:"get-alfred.ai — Monday.com Pricing 2026", u:"https://get-alfred.ai/blog/monday-pricing"},
+    {t:"The Digital Project Manager — monday.com Pricing Tiers & Costs", u:"https://thedigitalprojectmanager.com/tools/monday-pricing/"},
+    {t:"G2 Learn Hub — Best Project Management Software", u:"https://learn.g2.com/best-project-management-software"},
+    {t:"Medium (Theo James) — I Tested All 3: ClickUp vs Monday vs Asana", u:"https://medium.com/@theo-james/i-tested-all-3-clickup-vs-monday-vs-asana-26869c26cd4b"},
+    {t:"G2 — Compare Notion Labs and monday Work Management", u:"https://www.g2.com/compare/notion-labs-notion-vs-monday-com-monday-com"},
+    {t:"eesel AI — ClickUp pricing 2026", u:"https://www.eesel.ai/blog/clickup-pricing"},
+    {t:"usecarly — ClickUp Pricing 2026", u:"https://www.usecarly.com/blog/clickup-pricing/"},
+    {t:"G2 — Compare ClickUp and Google Workspace", u:"https://www.g2.com/compare/clickup-vs-google-workspace"},
+    {t:"G2 Learn Hub — ClickUp review", u:"https://learn.g2.com/clickup-review"},
+    {t:"thebusinessdive — Notion vs ClickUp: 90 Days In", u:"https://thebusinessdive.com/notion-vs-clickup"},
+    {t:"UpSys Consulting — ClickUp Pricing 2026 Explained", u:"https://www.upsys-consulting.com/en/blog/clickup-pricing-explained"},
+    {t:"G2 — Compare ClickUp and Trello", u:"https://www.g2.com/compare/clickup-vs-trello"},
+    {t:"G2 — Compare ClickUp and Coda", u:"https://www.g2.com/compare/clickup-vs-coda-coda"},
+    {t:"Lifestack — Notion Pricing 2026", u:"https://lifestack.ai/blog/notion-pricing"},
+    {t:"smartprocessflow — Notion Free Plan Limits (2026)", u:"https://smartprocessflow.com/notion-free-plan-limits"},
+    {t:"gend.co — Notion Pricing Explained (2026)", u:"https://www.gend.co/blog/notion-pricing"},
+    {t:"Hack'celeration — Notion Review 2026", u:"https://hackceleration.com/labs/review/notion"},
+    {t:"G2 — Compare Asana and Notion", u:"https://www.g2.com/compare/asana-vs-notion"},
+    {t:"ClickUp blog — Notion vs. Asana", u:"https://clickup.com/blog/notion-vs-asana/"},
+    {t:"G2 — Notion Reviews", u:"https://www.g2.com/products/notion/reviews"},
+    {t:"G2 — Compare ClickHelp and Notion", u:"https://www.g2.com/compare/clickhelp-vs-notion"},
+    {t:"eesel AI — Notion review (2026)", u:"https://www.eesel.ai/blog/notion-review"},
+  ];
+  // 1-indexed helper for citation footnotes
+  function S(n){ return n; }
+
+  const CRITERIA = [
+    {id:"price", label:"Starting price & free-tier generosity", desc:"Cost to begin, and how usable the free plan is solo", def:7},
+    {id:"learn", label:"Ease of learning", desc:"Time to get productive with no training", def:7},
+    {id:"depth", label:"Feature depth", desc:"Automation, custom fields, dependencies", def:5},
+    {id:"mobile", label:"Mobile app quality", desc:"Usability of the iOS/Android apps", def:4},
+    {id:"integr", label:"Integrations", desc:"Breadth of native + Zapier connections", def:5},
+    {id:"client", label:"Client-facing features", desc:"Guest access & external sharing", def:6},
+    {id:"support", label:"Customer support", desc:"Responsiveness, channels, and free-tier access", def:4},
+    {id:"storage", label:"Storage / user limits (entry plan)", desc:"Free or cheapest-paid-tier ceilings", def:5},
+  ];
+
+  const TOOLS = [
+    {
+      id:"asana", name:"Asana", tag:"Structured",
+      scores:{
+        price:   {v:6,  sourced:true,  fact:"Free “Personal” plan is capped at 2 users (accounts before Nov 12, 2025 keep a legacy 10‑user cap); cheapest paid tier, Starter, is $10.99/user/mo billed annually.", cites:[S(1),S(2),S(3)]},
+        learn:   {v:8.6,sourced:true,  fact:"G2 Ease of Use score: 8.6/10. Overall G2 rating 4.4/5 across 13,000+ reviews; reviewers cite a fast, guided onboarding wizard.", cites:[S(4),S(5)]},
+        depth:   {v:5,  sourced:true,  fact:"Free plan excludes custom fields, automations, forms, goals, portfolios, and timeline/Gantt view entirely — all require Starter or Advanced.", cites:[S(2),S(3)]},
+        mobile:  {v:7,  sourced:false, fact:"No isolated G2 mobile sub-score found for Asana in sources reviewed. Reviews describe the mobile apps as making \"task management easy\" for on-the-go use.", cites:[S(6)]},
+        integr:  {v:6.5,sourced:true,  fact:"Native integration counts vary by source, roughly 150+ to 270+, plus Zapier. Range reflects real disagreement between trackers, not a single vendor figure.", cites:[S(7),S(8),S(9)]},
+        client:  {v:5.5,sourced:true,  fact:"No guest access on the free Personal plan; unlimited free guests unlock starting on the Starter plan ($10.99/user/mo).", cites:[S(2)]},
+        support: {v:8.5,sourced:true,  fact:"G2 Quality of Support score: 8.5/10. Free-tier users get community forum + knowledge base only; priority support requires a paid plan.", cites:[S(4),S(5)]},
+        storage: {v:6,  sourced:true,  fact:"Unlimited total file storage on the free plan, but each individual file attachment is capped at 100MB, and the plan is hard-limited to 2 seats.", cites:[S(3)]},
+      }
+    },
+    {
+      id:"monday", name:"monday.com", tag:"Visual",
+      scores:{
+        price:   {v:4,  sourced:true,  fact:"Free plan capped at 2 seats and 3 boards. Cheapest paid tier (Basic, $9/seat/mo annual) has a hidden 3-seat minimum, so the real monthly floor is $27, even for one person.", cites:[S(10),S(11),S(12)]},
+        learn:   {v:9.1,sourced:true,  fact:"G2 Ease of Use score: 9.1/10 — the highest of the four tools compared. Overall G2 rating 4.7/5; reviewers repeatedly cite templates and visual boards.", cites:[S(4),S(5)]},
+        depth:   {v:4,  sourced:true,  fact:"Free plan has zero automations and zero integrations. Both require upgrading to the Standard tier ($12/seat/mo annual).", cites:[S(10),S(13)]},
+        mobile:  {v:7,  sourced:false, fact:"No isolated numeric mobile score found for monday.com in sources reviewed. Qualitative reviews describe strong support for visual, on-the-go project tracking.", cites:[S(14)]},
+        integr:  {v:6.5,sourced:true,  fact:"Roughly 200+ native integrations covering CRM, marketing, and dev tools, plus Zapier.", cites:[S(9),S(15)]},
+        client:  {v:4.5,sourced:true,  fact:"Guest access is not included on Free or Basic — it only unlocks starting on the Standard plan ($12/seat/mo annual).", cites:[S(13)]},
+        support: {v:8.9,sourced:true,  fact:"G2 Quality of Support score: 8.9/10 — the highest of the four tools compared.", cites:[S(4),S(16)]},
+        storage: {v:4,  sourced:true,  fact:"Free plan is capped at 500MB total storage and a hard limit of 3 boards.", cites:[S(11),S(12)]},
+      }
+    },
+    {
+      id:"clickup", name:"ClickUp", tag:"All-in-one",
+      scores:{
+        price:   {v:9,  sourced:true,  fact:"“Free Forever” plan has no seat cap at all — unlimited members and unlimited tasks. Cheapest paid tier (Unlimited) is $7/user/mo annual, the lowest entry price of the four.", cites:[S(17),S(18)]},
+        learn:   {v:8.5,sourced:true,  fact:"G2 Ease of Use scores ~8.5–8.8/10 across comparisons, though reviewers consistently describe a real setup learning curve before the tool feels fast.", cites:[S(19),S(20)]},
+        depth:   {v:8.5,sourced:true,  fact:"Most views per platform (List, Board, Gantt, Whiteboards, native time tracking); automation is included even on the free tier (100 runs/month) and unlimited on paid tiers.", cites:[S(7),S(8),S(20)]},
+        mobile:  {v:8.1,sourced:true,  fact:"G2 Mobile Application score: 8.1/10 (directly measured vs. Google Workspace's 9.0) — reviewers note occasional bugs and slower performance versus desktop.", cites:[S(19)]},
+        integr:  {v:9.5,sourced:true,  fact:"1,000+ native integrations (Slack, GitHub, Figma, HubSpot, etc.), plus Zapier access to 8,000+ additional apps — the widest of the four.", cites:[S(7),S(8),S(21)]},
+        client:  {v:6,  sourced:true,  fact:"Guests are included on the free plan with limits; more guest allowances appear on paid tiers, though guests can auto-convert to billed members if misconfigured.", cites:[S(18),S(22)]},
+        support: {v:8.9,sourced:true,  fact:"G2 Quality of Support score: 8.9/10, consistent across multiple G2 comparison pages. 24/7 chat and email support on every plan, including free — no phone support at any tier.", cites:[S(19),S(23),S(24)]},
+        storage: {v:4.5,sourced:true,  fact:"Free-plan storage cap is reported inconsistently across sources as either 60MB or 100MB total (see methodology) — either figure is the tightest storage ceiling of the four tools.", cites:[S(17),S(18)]},
+      }
+    },
+    {
+      id:"notion", name:"Notion", tag:"Docs-first",
+      scores:{
+        price:   {v:7,  sourced:true,  fact:"Free plan gives a solo user unlimited pages and blocks with no seat cap for individual use (limits reappear once a second collaborator joins). Cheapest paid tier, Plus, is $10/user/mo annual.", cites:[S(25),S(26),S(27)]},
+        learn:   {v:7.5,sourced:false, fact:"No single isolated G2 sub-score found for Notion's ease of learning. Qualitative reviews call the solo interface \"minimalist,\" but describe a real learning curve for building complex databases.", cites:[S(28),S(29)]},
+        depth:   {v:5.5,sourced:true,  fact:"No native Gantt/timeline view and no task automation comparable to Asana, monday, or ClickUp; its strength is docs, wikis, and databases rather than PM-specific workflow tooling.", cites:[S(30)]},
+        mobile:  {v:6.5,sourced:false, fact:"No isolated numeric mobile score found. G2 reviewers describe the mobile app as \"a bit sluggish\" when navigating heavily nested pages or large databases.", cites:[S(31)]},
+        integr:  {v:6,  sourced:true,  fact:"100+ native integrations, plus Zapier access to 8,000+ additional apps.", cites:[S(21)]},
+        client:  {v:6.5,sourced:true,  fact:"Free plan includes up to 10 view-only guest invitations at no cost; unlimited guests unlock on the Plus plan.", cites:[S(25),S(27)]},
+        support: {v:8.5,sourced:true,  fact:"G2 Quality of Support scores cluster at 8.5–8.6/10 across multiple G2 comparison pages.", cites:[S(16),S(32),S(33)]},
+        storage: {v:5.5,sourced:true,  fact:"Unlimited pages and blocks for a solo user, but each individual file upload is capped at 5MB on the free plan.", cites:[S(25),S(26)]},
+      }
+    },
+  ];
+
+  // ---------------------------------------------------------------------
+  // BUILD DIALS
+  // ---------------------------------------------------------------------
+  const dialContainer = document.getElementById('dialContainer');
+  const weights = {};
+  CRITERIA.forEach(c => {
+    weights[c.id] = c.def;
+    const row = document.createElement('div');
+    row.className = 'dial-row';
+    row.innerHTML = `
+      <div class="dial-top">
+        <span class="dial-name">${c.label}</span>
+        <span class="dial-val" id="val-${c.id}">${c.def}</span>
+      </div>
+      <input type="range" min="0" max="10" step="1" value="${c.def}" id="dial-${c.id}" aria-label="${c.label} priority">
+    `;
+    dialContainer.appendChild(row);
+  });
+
+  function updateSliderFill(el){
+    const pct = (el.value - el.min) / (el.max - el.min) * 100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+
+  CRITERIA.forEach(c => {
+    const el = document.getElementById('dial-' + c.id);
+    updateSliderFill(el);
+    el.addEventListener('input', () => {
+      weights[c.id] = Number(el.value);
+      document.getElementById('val-' + c.id).textContent = el.value;
+      updateSliderFill(el);
+      render();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    CRITERIA.forEach(c => {
+      const el = document.getElementById('dial-' + c.id);
+      el.value = 5;
+      weights[c.id] = 5;
+      document.getElementById('val-' + c.id).textContent = 5;
+      updateSliderFill(el);
+    });
+    render();
+  });
+
+  // ---------------------------------------------------------------------
+  // LEADERBOARD RENDER
+  // ---------------------------------------------------------------------
+  const leaderboardEl = document.getElementById('leaderboard');
+  const weightSumEl = document.getElementById('weightSum');
+
+  function render(){
+    const totalWeight = CRITERIA.reduce((s,c) => s + weights[c.id], 0);
+    weightSumEl.textContent = totalWeight > 0 ? `Σ weight ${totalWeight}` : '';
+
+    if(totalWeight === 0){
+      leaderboardEl.innerHTML = `
+        <div class="empty-state">
+          <b>No priorities set</b>
+          Move at least one dial above 0 — with everything at zero there's nothing to rank on.
+        </div>`;
+      return;
+    }
+
+    const results = TOOLS.map(tool => {
+      let sum = 0;
+      CRITERIA.forEach(c => { sum += weights[c.id] * tool.scores[c.id].v; });
+      const score = sum / totalWeight; // weighted average, 0–10 scale
+      return { tool, score };
+    }).sort((a,b) => b.score - a.score);
+
+    const topScore = results[0].score;
+    const tiedCount = results.filter(r => Math.abs(r.score - topScore) < 0.05).length;
+
+    leaderboardEl.innerHTML = results.map((r, i) => `
+      <div class="rank-row ${i===0 ? 'is-first' : ''}">
+        <div class="rank-num">${i+1}</div>
+        <div class="rank-body">
+          <div class="rank-name-row">
+            <span class="rank-name">${r.tool.name}</span>
+            <span class="rank-tag">${r.tool.tag}</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(r.score/10*100).toFixed(1)}%"></div></div>
+        </div>
+        <div class="rank-score">${r.score.toFixed(2)}</div>
+      </div>
+    `).join('') + (tiedCount > 1 ? `<div class="tie-note">${tiedCount} tools are within 0.05 of each other at the top — treat this as a tie given the estimate ranges in the data below.</div>` : '');
+  }
+
+  // ---------------------------------------------------------------------
+  // MATRIX TABLE
+  // ---------------------------------------------------------------------
+  function buildMatrix(){
+    const table = document.getElementById('matrixTable');
+    let thead = '<thead><tr><th>Criterion</th>' + TOOLS.map(t => `<th class="tool-head">${t.name}</th>`).join('') + '</tr></thead>';
+    let tbody = '<tbody>';
+    CRITERIA.forEach(c => {
+      tbody += `<tr><td class="crit-cell"><div class="crit-name">${c.label}</div><div class="crit-desc">${c.desc}</div></td>`;
+      TOOLS.forEach(t => {
+        const s = t.scores[c.id];
+        const cites = s.cites.map(n => `<a class="cite" href="#src-${n}">[${n}]</a>`).join('');
+        tbody += `<td class="fact-cell">
+          ${!s.sourced ? '<span class="est-badge">Estimate</span>' : ''}
+          <div class="fact-score"><span class="fact-num">${s.v}</span><span style="font-family:var(--mono);font-size:10px;color:var(--text-dimmer);">/10</span></div>
+          <div class="fact-text">${s.fact}${cites}</div>
+        </td>`;
+      });
+      tbody += '</tr>';
+    });
+    tbody += '</tbody>';
+    table.innerHTML = thead + tbody;
+  }
+
+  // ---------------------------------------------------------------------
+  // SOURCES PANEL
+  // ---------------------------------------------------------------------
+  function buildSources(){
+    const list = document.getElementById('sourceList');
+    document.getElementById('sourceCountLabel').textContent = `${SOURCES.length} citations used across the table above`;
+    list.innerHTML = SOURCES.map((s, i) => `
+      <li class="source-item" id="src-${i+1}">
+        <div class="source-idx">[${i+1}]</div>
+        <div>
+          <div class="source-title"><a href="${s.u}" target="_blank" rel="noopener">${s.t}</a></div>
+          <div class="source-used">${s.u.replace(/^https?:\/\//,'')}</div>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  // ---------------------------------------------------------------------
+  // METHODOLOGY PANEL
+  // ---------------------------------------------------------------------
+  function buildMethodology(){
+    document.getElementById('methodologyBody').innerHTML = `
+      <div class="method-block">
+        <div class="method-h">Scoring logic</div>
+        <p class="method-p">Every cell in the table is anchored to a specific, cited fact — a published price, a G2 crowdsourced metric (ease of use, quality of support, mobile application score), or a documented plan limit. Where G2 publishes a direct 0–10 metric for a criterion, we used it as-is. Where no such metric exists (feature depth, client-facing features, and most of pricing/storage), we converted the underlying facts into a 1–10 score ourselves so the four tools are comparable on the same scale — this conversion is editorial judgment, not a re-statement of someone else's index.</p>
+        <p class="method-p">The live ranking is a straight weighted average: each criterion's score is multiplied by your dial value, summed, and divided by the total weight in play. Nothing is normalized against a hidden baseline — set every dial to the same number and you get a simple unweighted average.</p>
+      </div>
+      <div class="method-block">
+        <div class="method-h">Conflicts we had to resolve</div>
+        <div class="conflict-box">
+          <div class="conflict-title">Asana's free-tier seat cap: 2 vs. 10</div>
+          <div class="conflict-text">Most 2026 sources, including Asana's own help center, state the current free "Personal" plan caps out at 2 users. Several older or slower-to-update guides still cite a 10-user cap. We used 2 as the current headline figure and note the legacy exception: accounts created before November 12, 2025 keep a "Legacy Personal Plan" that can retain up to 10 seats.</div>
+        </div>
+        <div class="conflict-box">
+          <div class="conflict-title">ClickUp's free-plan storage: 60MB vs. 100MB</div>
+          <div class="conflict-text">Sources split roughly evenly between a 60MB and a 100MB total storage cap on the Free Forever plan. We couldn't resolve this from the sources gathered, so the table states the range rather than picking one — either figure keeps ClickUp's free storage the tightest of the four tools.</div>
+        </div>
+        <div class="conflict-box">
+          <div class="conflict-title">Integration counts are directional, not audited</div>
+          <div class="conflict-text">No vendor publishes an audited integration count, and independent trackers disagree meaningfully — Asana's native integration count alone ranges from roughly 150+ to 270+ depending on the source and the date it was written. We present these as approximate ranges rather than precise figures.</div>
+        </div>
+        <div class="conflict-box">
+          <div class="conflict-title">Mobile app quality was the thinnest data point</div>
+          <div class="conflict-text">Only ClickUp had an isolated, directly-cited G2 mobile application score (8.1/10, measured against Google Workspace). For Asana, monday.com, and Notion, we found no equivalent isolated metric in the sources reviewed, so those three scores are editorial estimates built from qualitative review sentiment and are flagged accordingly in the table.</div>
+        </div>
+      </div>
+      <div class="method-block">
+        <div class="method-h">What this tool is not</div>
+        <p class="method-p">This is not a substitute for trying the free plan of your top 1–2 candidates yourself. Software pricing, free-tier limits, and AI-credit systems for all four tools have changed multiple times within the past year — treat every number here as a snapshot from the cited source's publish date, not a live feed.</p>
+      </div>
+    `;
+  }
+
+  buildMatrix();
+  buildSources();
+  buildMethodology();
+  render();
+})();
+</script>
+</body>
+</html>
