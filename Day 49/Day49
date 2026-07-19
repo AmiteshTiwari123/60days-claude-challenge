@@ -1,0 +1,32 @@
+# Day 49 – Build Personal AI Playbook
+
+## 60 Days of Claude AI Challenge
+
+### Project Overview
+Today I built a Personal AI Playbook using Claude AI. The goal was to transform recurring AI use cases into reusable and personalized workflow systems instead of relying on one-off prompts.
+
+### What I Built
+- A personalized AI workflow library
+- Modular prompt building blocks
+- A Prompt Builder for assembling reusable prompts
+- An Autonomous Loop Builder
+- Workflow saving, searching, and favoriting features
+- A self-explanatory and user-friendly interface
+
+### Key Learnings
+- Modular Prompt Design: Breaking prompts into reusable blocks such as role, objective, context, and constraints.
+- Autonomous Loop Prompts: Turning one-shot prompts into self-evaluating and iterative workflows.
+- Personalization: Building AI systems based on real roles, use cases, tools, and bottlenecks.
+- Self-Explanatory UX: Designing interfaces that are easy to understand and use.
+
+### Tools Used
+- Claude AI
+- HTML
+- CSS
+- JavaScript
+- GitHub
+
+### Conclusion
+Day 49 helped me understand how recurring AI tasks can be transformed into structured, reusable workflow systems. Instead of writing prompts from scratch every time, a Personal AI Playbook can make AI workflows more organized, consistent, and scalable.
+
+#60DaysOfClaude #ClaudeAI #ArtificialIntelligence #PromptEngineering #AIWorkflow #GenerativeAI
