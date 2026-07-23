@@ -1,0 +1,54 @@
+# Day 52 – System Design
+
+## 60 Days of Claude AI Challenge
+
+Today I completed Day 52 of the 60 Days of Claude AI Challenge and Day 2 of my 10-day Capstone Project.
+
+## Today's Challenge
+
+The goal of Day 52 was to transform the product plan created on Day 51 into a complete technical blueprint before starting implementation.
+
+Using the PRD, Implementation Blueprint, and Pitch Deck from Day 51 as the source of truth, I worked on designing the technical foundation of the project.
+
+## What I Worked On
+
+- Reviewed the Day 51 PRD and Implementation Blueprint
+- Finalized and justified the technology stack
+- Designed the overall system architecture
+- Defined the database schema and relationships
+- Planned the v1.0 API endpoints
+- Created user flows and low-fidelity wireframes
+- Defined the project folder structure
+- Performed the Day 3 readiness check
+- Reviewed the scope to avoid unnecessary scope creep
+
+## Deliverables
+
+The following technical design documents were created:
+
+- `ARCHITECTURE.md`
+- `SCHEMA.md`
+- `API.md`
+- `UI-WIREFRAMES.md`
+- `PROJECT-STRUCTURE.md`
+
+These documents will serve as the technical foundation for the implementation phase of the capstone project.
+
+## Key Learnings
+
+Today I learned the importance of designing a system before jumping directly into coding.
+
+A clear architecture, database schema, API contract, user flow, and project structure can reduce confusion during development and help keep the project aligned with its original requirements.
+
+I also learned that good system design is not about choosing the most complex technology. It is about selecting the right tools for the actual requirements and keeping the v1.0 scope realistic.
+
+## Progress
+
+Day 52/60 Completed ✅  
+Capstone Project: Day 2/10 Completed ✅
+
+The technical blueprint is now ready.
+
+Next step: Start turning the design into a working product.
+
+#60DaysOfClaudeAI #ClaudeAI #SystemDesign #ArtificialIntelligence #SoftwareDevelopment #BuildInPublic #CapstoneProject
